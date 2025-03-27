@@ -4,8 +4,8 @@ import { NewsItem } from '../types';
 // Use the production URL in production, or localhost in development
 const API_URL = process.env.REACT_APP_API_URL || 
   (process.env.NODE_ENV === 'production' 
-    ? 'https://dougsnews.com/api' 
-    : 'http://192.168.200.184:5000/api');
+    ? 'https://www.dougsnews.com/backend/api' 
+    : 'https://www.dougsnews.com/backend/api');
 
 // Create axios instance
 const api = axios.create({
@@ -13,6 +13,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // This allows cookies to be sent with cross-origin requests
 });
 
 // Add a request interceptor to include auth token
