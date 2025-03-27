@@ -20,11 +20,12 @@ app.use(express.json());
 
 // Configure CORS to allow requests from any origin
 app.use(cors({
-  origin: '*', // Allow all origins
+  origin: true, // Reflect the request origin
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-console.log('CORS enabled for all origins');
+console.log('CORS enabled with credentials support');
 
 app.use(morgan('dev'));
 
