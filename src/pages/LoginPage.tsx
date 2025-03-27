@@ -58,7 +58,7 @@ const AnimatedPaper = styled(Paper)(({ theme }) => ({
   boxShadow: '0 8px 40px rgba(0,0,0,0.12)',
   backdropFilter: 'blur(10px)',
   background: 'rgba(255,255,255,0.9)',
-}));
+})) as typeof Paper;
 
 const ShimmerButton = styled(Button)(({ theme }) => ({
   position: 'relative',
@@ -75,7 +75,7 @@ const ShimmerButton = styled(Button)(({ theme }) => ({
     animation: `${shimmer} 2s infinite`,
     pointerEvents: 'none',
   },
-}));
+})) as typeof Button;
 
 interface TabPanelProps {
   children?: React.ReactNode;

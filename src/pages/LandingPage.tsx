@@ -48,7 +48,7 @@ const shimmer = keyframes`
 // Styled components
 const AnimatedBox = styled(Box)(({ theme }) => ({
   animation: `${fadeIn} 1s ease-out`,
-}));
+})) as typeof Box;
 
 const ShimmerButton = styled(Button)(({ theme }) => ({
   position: 'relative',
@@ -65,7 +65,7 @@ const ShimmerButton = styled(Button)(({ theme }) => ({
     animation: `${shimmer} 2s infinite`,
     pointerEvents: 'none',
   },
-}));
+})) as typeof Button;
 
 const NewspaperTitle = styled(Typography)(({ theme }) => ({
   fontFamily: '"Playfair Display", "Times New Roman", serif',
@@ -75,14 +75,14 @@ const NewspaperTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
   marginBottom: theme.spacing(2),
   textTransform: 'uppercase',
-}));
+})) as typeof Typography;
 
 const NewspaperDate = styled(Typography)(({ theme }) => ({
   fontFamily: '"Lora", "Georgia", serif',
   fontStyle: 'italic',
   color: theme.palette.text.secondary,
   marginBottom: theme.spacing(3),
-}));
+})) as typeof Typography;
 
 const FeatureCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -93,7 +93,7 @@ const FeatureCard = styled(Card)(({ theme }) => ({
     transform: 'translateY(-8px)',
     boxShadow: '0 12px 30px rgba(0,0,0,0.15)',
   },
-}));
+})) as typeof Card;
 
 // Sample news data
 const featuredNews = [

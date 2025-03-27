@@ -51,7 +51,7 @@ const NewsHeadline = styled(Typography)(({ theme }) => ({
   fontFamily: '"Playfair Display", "Times New Roman", serif',
   fontWeight: 700,
   lineHeight: 1.3,
-}));
+})) as typeof Typography;
 
 const DateChip = styled(Chip)(({ theme }) => ({
   fontFamily: '"Lora", "Georgia", serif',
