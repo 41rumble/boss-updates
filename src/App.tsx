@@ -4,7 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Layout from './components/Layout';
 import NewsPage from './pages/NewsPage';
-import FavoritesPage from './pages/FavoritesPage';
+import KeepersPage from './pages/KeepersPage';
 import AdminPage from './pages/AdminPage';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
@@ -139,7 +139,7 @@ function App() {
               </ProtectedRoute>
             }>
               <Route index element={<NewsPage />} />
-              <Route path="favorites" element={<FavoritesPage />} />
+              <Route path="keepers" element={<KeepersPage />} />
               <Route path="admin" element={<AdminPage />} />
             </Route>
           </Routes>

@@ -135,7 +135,7 @@ const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite, onItemUpdat
             {item.isFavorite ? <StarIcon /> : <StarBorderIcon />}
           </IconButton>
           <Typography variant="caption" color="text.secondary" sx={{ mr: 2 }}>
-            {item.isFavorite ? 'Saved to favorites' : 'Add to favorites'}
+            {item.isFavorite ? 'Saved to Keepers' : 'Add to Keepers'}
           </Typography>
           
           {/* Edit button - only visible to admins */}

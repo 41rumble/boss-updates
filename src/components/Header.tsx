@@ -148,11 +148,11 @@ const Header = () => {
                       </ListItemIcon>
                       <ListItemText primary="Latest News" />
                     </ListItemButton>
-                    <ListItemButton component={RouterLink} to="/news/favorites">
+                    <ListItemButton component={RouterLink} to="/news/keepers">
                       <ListItemIcon>
                         <StarIcon />
                       </ListItemIcon>
-                      <ListItemText primary="Favorites" />
+                      <ListItemText primary="Keepers" />
                     </ListItemButton>
                     <ListItemButton component={RouterLink} to="/news/admin">
                       <ListItemIcon>
@@ -186,11 +186,11 @@ const Header = () => {
                 <Button 
                   color="inherit" 
                   component={RouterLink} 
-                  to="/news/favorites"
+                  to="/news/keepers"
                   startIcon={<StarIcon />}
                   sx={{ fontWeight: 500 }}
                 >
-                  Favorites
+                  Keepers
                 </Button>
                 <Button 
                   color="inherit" 
