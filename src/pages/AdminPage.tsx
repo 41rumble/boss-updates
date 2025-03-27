@@ -6,9 +6,11 @@ import {
   Button, 
   Paper,
   Snackbar,
-  Alert
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import { addNewsItem } from '../services/api';
 
 const AdminPage = () => {
   const [title, setTitle] = useState('');
@@ -16,20 +18,25 @@ const AdminPage = () => {
   const [link, setLink] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // In a real app, this would be an API call
-    setTimeout(() => {
-      console.log('Submitted:', { title, summary, link, date: new Date().toISOString() });
+    try {
+      await addNewsItem({ title, summary, link });
       setTitle('');
       setSummary('');
       setLink('');
       setSnackbarOpen(true);
+      setError(null);
+    } catch (err) {
+      console.error('Error adding news item:', err);
+      setError('Failed to add update. Please try again.');
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -79,7 +86,7 @@ const AdminPage = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
             disabled={!title || !summary || !link || isSubmitting}
-            endIcon={<SendIcon />}
+            endIcon={isSubmitting ? <CircularProgress size={24} color="inherit" /> : <SendIcon />}
           >
             {isSubmitting ? 'Submitting...' : 'Add Update'}
           </Button>
@@ -93,6 +100,16 @@ const AdminPage = () => {
       >
         <Alert onClose={() => setSnackbarOpen(false)} severity="success">
           Update added successfully!
+        </Alert>
+      </Snackbar>
+
+      <Snackbar 
+        open={!!error} 
+        autoHideDuration={6000} 
+        onClose={() => setError(null)}
+      >
+        <Alert onClose={() => setError(null)} severity="error">
+          {error}
         </Alert>
       </Snackbar>
     </Box>

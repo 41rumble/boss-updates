@@ -1,14 +1,18 @@
 export interface NewsItem {
-  id: string;
+  _id?: string;
+  id?: string; // For backward compatibility
   title: string;
   summary: string;
   link: string;
   date: string;
   isFavorite: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface User {
-  id: string;
+  _id?: string;
+  id?: string; // For backward compatibility
   username: string;
   isAdmin: boolean;
 }

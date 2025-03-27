@@ -12,6 +12,8 @@ interface NewsItemProps {
 
 const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
   const formattedDate = new Date(item.date).toLocaleDateString();
+  // Use _id if available, otherwise fall back to id
+  const itemId = item._id || item.id || '';
   
   return (
     <Card sx={{ mb: 2, borderRadius: 2 }}>
@@ -32,7 +34,7 @@ const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
       </CardContent>
       <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 1 }}>
         <IconButton 
-          onClick={() => onToggleFavorite(item.id)}
+          onClick={() => onToggleFavorite(itemId)}
           color={item.isFavorite ? "secondary" : "default"}
           aria-label={item.isFavorite ? "Remove from favorites" : "Add to favorites"}
         >

@@ -1,6 +1,6 @@
 # Boss Updates App
 
-A simple and secure React application for sharing information with your boss. The app features a clean, professional interface built with Material UI, optimized for both desktop and mobile viewing.
+A simple and secure React application for sharing information with your boss. The app features a clean, professional interface built with Material UI, optimized for both desktop and mobile viewing. It includes a MongoDB backend for persistent data storage.
 
 ## Features
 
@@ -9,6 +9,8 @@ A simple and secure React application for sharing information with your boss. Th
 - **Admin Panel**: Add new updates with title, summary, and source link
 - **Responsive Design**: Optimized for mobile devices
 - **Material UI**: Professional and clean interface
+- **MongoDB Backend**: Persistent data storage with MongoDB Atlas
+- **Express API**: RESTful API for data management
 
 ## Getting Started
 
@@ -16,31 +18,49 @@ A simple and secure React application for sharing information with your boss. Th
 
 - Node.js (v14 or higher)
 - npm (v6 or higher)
+- MongoDB Atlas account (or local MongoDB installation)
 
 ### Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/boss-updates.git
+   git clone https://github.com/41rumble/boss-updates.git
    cd boss-updates
    ```
 
-2. Install dependencies:
+2. Install frontend dependencies:
    ```bash
    npm install
    ```
 
-3. Start the mock API server:
+3. Install backend dependencies:
    ```bash
-   npm run server
+   cd backend
+   npm install
    ```
 
-4. In a new terminal, start the React application:
+4. Configure environment variables:
+   - Create a `.env` file in the `backend` directory
+   - Add the following variables:
+     ```
+     MONGODB_URI=your_mongodb_connection_string
+     PORT=5000
+     CORS_ORIGIN=https://dougsnews.com
+     ```
+
+5. Start the backend server:
    ```bash
+   cd backend
+   npm run dev
+   ```
+
+6. In a new terminal, start the React application:
+   ```bash
+   cd ..
    npm start
    ```
 
-5. Open your browser and navigate to:
+7. Open your browser and navigate to:
    ```
    http://localhost:3000
    ```
@@ -48,12 +68,19 @@ A simple and secure React application for sharing information with your boss. Th
 ## Project Structure
 
 ```
-src/
-├── components/      # Reusable UI components
-├── pages/           # Page components
-├── services/        # API services
-├── types/           # TypeScript interfaces
-└── context/         # React context providers
+├── src/                  # Frontend React application
+│   ├── components/       # Reusable UI components
+│   ├── pages/            # Page components
+│   ├── services/         # API services
+│   ├── types/            # TypeScript interfaces
+│   └── context/          # React context providers
+│
+└── backend/              # Backend Express application
+    ├── src/              # Backend source code
+    │   ├── controllers/  # API controllers
+    │   ├── models/       # MongoDB models
+    │   └── routes/       # API routes
+    └── .env              # Environment variables
 ```
 
 ## Usage
@@ -72,10 +99,27 @@ Navigate to the "Admin" tab to add new updates with title, summary, and source l
 
 ## Available Scripts
 
+### Frontend
 - `npm start` - Runs the app in development mode
 - `npm run build` - Builds the app for production
 - `npm test` - Runs the test suite
-- `npm run server` - Starts the mock JSON server API
+
+### Backend
+- `npm start` - Runs the backend server
+- `npm run dev` - Runs the backend server with nodemon for development
+
+## Deployment
+
+### Frontend
+The frontend can be deployed to any static hosting service like Netlify, Vercel, or GitHub Pages.
+
+### Backend
+The backend can be deployed to services like Heroku, Render, or DigitalOcean.
+
+For production deployment:
+1. Build the React app: `npm run build`
+2. Set the `NODE_ENV` environment variable to `production` for the backend
+3. Configure the domain in the `.env` file
 
 ## Future Enhancements
 

@@ -1,37 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Snackbar, Alert } from '@mui/material';
 import NewsList from '../components/NewsList';
 import { NewsItem } from '../types';
+import { getFavorites, toggleFavorite } from '../services/api';
 
 const FavoritesPage = () => {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchFavorites = async () => {
+    try {
+      setLoading(true);
+      const data = await getFavorites();
+      setNewsItems(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching favorites:', err);
+      setError('Failed to load favorites. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // In a real app, fetch from API
-    setTimeout(() => {
-      // This would be a separate API call to get favorites
-      const mockNewsItems = [
-        {
-          id: '2',
-          title: 'New Client Acquisition',
-          summary: 'We have successfully onboarded XYZ Corp as a new client with an estimated annual contract value of $500K.',
-          link: 'https://example.com/client',
-          date: '2023-04-10',
-          isFavorite: true
-        }
-      ];
-      setNewsItems(mockNewsItems);
-      setLoading(false);
-    }, 1000);
+    fetchFavorites();
   }, []);
 
-  const handleToggleFavorite = (id: string) => {
-    setNewsItems(prevItems => 
-      prevItems.map(item => 
-        item.id === id ? { ...item, isFavorite: !item.isFavorite } : item
-      ).filter(item => item.isFavorite)
-    );
+  const handleToggleFavorite = async (id: string) => {
+    try {
+      await toggleFavorite(id);
+      // Remove the item from favorites list
+      setNewsItems(prevItems => prevItems.filter(item => item._id !== id));
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+      setError('Failed to update favorite status. Please try again.');
+    }
   };
 
   return (
@@ -46,6 +50,16 @@ const FavoritesPage = () => {
         onToggleFavorite={handleToggleFavorite}
         emptyMessage="No favorites yet. Star items from the News page to add them here."
       />
+
+      <Snackbar 
+        open={!!error} 
+        autoHideDuration={6000} 
+        onClose={() => setError(null)}
+      >
+        <Alert onClose={() => setError(null)} severity="error">
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
