@@ -61,10 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
       
+      console.log('Login attempt:', { email, password });
+      
       // For demo purposes, we'll accept any login with password "password"
       // In a real app, use the API call below
       
       if (password === 'password') {
+        console.log('Login successful with demo credentials');
+        
         const user: User = {
           _id: '1',
           name: email.includes('admin') ? 'Admin User' : 'Doug',
@@ -101,7 +105,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       */
       
-      setError('Invalid email or password');
+      console.log('Login failed: Invalid credentials');
+      setError('Invalid email or password. Use any email with password: "password"');
       return false;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

@@ -142,7 +142,31 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
 
+    console.log('Login form submitted:', { email: loginEmail, password: loginPassword });
+
     try {
+      // For demo purposes, we'll accept any login with password "password"
+      if (loginPassword === 'password') {
+        console.log('Demo login successful');
+        
+        // Manually set auth data for demo
+        const user = {
+          _id: '1',
+          name: loginEmail.includes('admin') ? 'Admin User' : 'Doug',
+          email: loginEmail,
+          isAdmin: loginEmail.includes('admin'),
+          token: 'demo_token_' + Math.random().toString(36).substring(2)
+        };
+        
+        localStorage.setItem('auth_token', user.token);
+        localStorage.setItem('user_data', JSON.stringify(user));
+        
+        // Navigate to dashboard
+        navigate('/news');
+        return;
+      }
+      
+      // Try the regular login flow
       const success = await login(loginEmail, loginPassword);
       if (success) {
         navigate('/news');
