@@ -95,7 +95,7 @@ export const getNewsItems = async (params?: { archived?: boolean }): Promise<New
     queryParams.archived = params.archived ? 'true' : 'false';
   }
   
-  const response = await api.get('/api/news', { params: queryParams });
+  const response = await api.get('/news', { params: queryParams });
   return response.data;
 };
 
@@ -114,7 +114,7 @@ export const getFavorites = async (params?: { adminOnly?: boolean, userOnly?: bo
     queryParams.userOnly = params.userOnly ? 'true' : 'false';
   }
   
-  const response = await api.get('/api/news/favorites', { params: queryParams });
+  const response = await api.get('/news/favorites', { params: queryParams });
   return response.data;
 };
 
@@ -123,63 +123,63 @@ export const getArchivedItems = async (): Promise<NewsItem[]> => {
 };
 
 export const toggleFavorite = async (id: string): Promise<NewsItem> => {
-  const response = await api.post(`/api/news/${id}/toggle-favorite`);
+  const response = await api.post(`/news/${id}/toggle-favorite`);
   return response.data;
 };
 
 export const toggleAdminKeeper = async (id: string): Promise<NewsItem> => {
-  const response = await api.post(`/api/news/${id}/toggle-admin-keeper`);
+  const response = await api.post(`/news/${id}/toggle-admin-keeper`);
   return response.data;
 };
 
 export const markAsRead = async (id: string): Promise<NewsItem> => {
-  const response = await api.post(`/api/news/${id}/mark-read`);
+  const response = await api.post(`/news/${id}/mark-read`);
   return response.data;
 };
 
 export const archiveItem = async (id: string): Promise<NewsItem> => {
-  const response = await api.post(`/api/news/${id}/archive`);
+  const response = await api.post(`/news/${id}/archive`);
   return response.data;
 };
 
 export const unarchiveItem = async (id: string): Promise<NewsItem> => {
-  const response = await api.post(`/api/news/${id}/unarchive`);
+  const response = await api.post(`/news/${id}/unarchive`);
   return response.data;
 };
 
 // Helper function to get a single item by ID
 export const getItemById = async (id: string): Promise<NewsItem | null> => {
-  const response = await api.get(`/api/news/${id}`);
+  const response = await api.get(`/news/${id}`);
   return response.data;
 };
 
 export const addNewsItem = async (newsItem: Omit<NewsItem, 'id' | 'date' | 'isFavorite' | 'isAdminKeeper' | 'isRead' | 'isArchived'>): Promise<NewsItem> => {
-  const response = await api.post('/api/news', newsItem);
+  const response = await api.post('/news', newsItem);
   return response.data;
 };
 
 export const updateNewsItem = async (id: string, newsItem: Partial<Omit<NewsItem, 'id' | 'date' | 'isFavorite' | 'isAdminKeeper' | 'isRead' | 'isArchived'>>): Promise<NewsItem> => {
-  const response = await api.put(`/api/news/${id}`, newsItem);
+  const response = await api.put(`/news/${id}`, newsItem);
   return response.data;
 };
 
 export const deleteNewsItem = async (id: string): Promise<void> => {
-  await api.delete(`/api/news/${id}`);
+  await api.delete(`/news/${id}`);
 };
 
 // Auth API calls
 export const login = async (email: string, password: string) => {
-  const response = await api.post('/api/auth/login', { email, password });
+  const response = await api.post('/auth/login', { email, password });
   return response.data;
 };
 
 export const register = async (name: string, email: string, password: string) => {
-  const response = await api.post('/api/auth/register', { name, email, password });
+  const response = await api.post('/auth/register', { name, email, password });
   return response.data;
 };
 
 export const getUserProfile = async () => {
-  const response = await api.get('/api/auth/profile');
+  const response = await api.get('/auth/profile');
   return response.data;
 };
 
