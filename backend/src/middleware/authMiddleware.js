@@ -7,6 +7,22 @@ exports.protect = async (req, res, next) => {
   
   console.log('Auth headers:', req.headers.authorization);
   
+  // For development environment, allow requests without authentication
+  if (process.env.NODE_ENV !== 'production') {
+    // Check if we're in development mode and want to bypass auth
+    const bypassAuth = process.env.BYPASS_AUTH === 'true';
+    if (bypassAuth) {
+      console.log('Bypassing authentication in development mode');
+      req.user = {
+        _id: 'dev-user',
+        name: 'Development User',
+        email: 'dev@example.com',
+        isAdmin: true
+      };
+      return next();
+    }
+  }
+  
   // Check if token exists in headers
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
@@ -44,7 +60,7 @@ exports.protect = async (req, res, next) => {
       console.error('Token verification error:', error);
       return res.status(401).json({ message: 'Not authorized, token failed' });
     }
-  } else if (!token) {
+  } else {
     console.log('No token provided');
     return res.status(401).json({ message: 'Not authorized, no token' });
   }

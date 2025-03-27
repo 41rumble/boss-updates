@@ -17,10 +17,22 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
-}));
+
+// Configure CORS based on environment
+if (process.env.NODE_ENV === 'production') {
+  app.use(cors({
+    origin: process.env.CORS_ORIGIN || 'https://dougsnews.com',
+    credentials: true
+  }));
+} else {
+  // In development, allow all origins
+  app.use(cors({
+    origin: '*',
+    credentials: true
+  }));
+  console.log('CORS enabled for all origins in development mode');
+}
+
 app.use(morgan('dev'));
 
 // Connect to MongoDB

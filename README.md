@@ -101,18 +101,23 @@ boss-updates/
    ```
 
 4. **Configure environment variables:**
-   - Create a `.env` file in the `backend` directory with the following variables:
+   - Copy the `.env.example` file to `.env` in the `backend` directory:
+   ```bash
+   cd backend
+   cp .env.example .env
    ```
-   MONGODB_URI=your_mongodb_connection_string
-   PORT=5000
-   JWT_SECRET=your_jwt_secret_key
-   NODE_ENV=development
-   ```
-
-   For local MongoDB, use:
+   
+   - The example file contains these settings:
    ```
    MONGODB_URI=mongodb://localhost:27017/dougs-news
+   PORT=5000
+   JWT_SECRET=your_jwt_secret_key_change_this_in_production
+   NODE_ENV=development
+   BYPASS_AUTH=true
    ```
+
+   - For development, `BYPASS_AUTH=true` allows you to skip authentication
+   - For production, set `NODE_ENV=production` and use a strong JWT_SECRET
 
 5. **Seed the database (optional):**
    ```bash
@@ -233,10 +238,16 @@ Demo credentials:
 2. **JWT Authentication Issues**:
    - Clear browser localStorage and try logging in again
    - Verify JWT_SECRET is set correctly in backend `.env`
+   - For development, set `BYPASS_AUTH=true` in the backend `.env` file
+   - Check browser console for authentication errors
+   - If you see "jwt malformed" errors, try logging out and back in
 
 3. **CORS Errors**:
    - During development, ensure backend is running on port 5000
-   - For production, update the CORS configuration in `backend/src/index.js`
+   - If you see CORS errors, check that the backend is running and accessible
+   - The backend is configured to allow all origins in development mode
+   - If you're using a different frontend URL, update the CORS configuration in `backend/src/index.js`
+   - For production, set `CORS_ORIGIN` in your environment variables
 
 4. **TypeScript Errors**:
    - Run `npm run tsc` to check for type errors
