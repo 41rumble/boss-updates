@@ -1,0 +1,48 @@
+# Update your Apache VirtualHost configuration with these settings
+
+<VirtualHost *:443>
+    ServerName dougsnews.com
+    ServerAlias www.dougsnews.com
+    DocumentRoot /var/www/html/dougsnews
+    <Directory /var/www/html/dougsnews>
+        Options -MultiViews
+        AllowOverride All
+        Require all granted
+
+        # Add explicit redirect rules here if .htaccess isn't working
+        RewriteEngine On
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^ index.html [L]
+    </Directory>
+    DirectoryIndex index.html
+    ErrorLog ${APACHE_LOG_DIR}/dougsnews.com_error.log
+    CustomLog ${APACHE_LOG_DIR}/dougsnews.com_access.log combined
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/dougsnews.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/dougsnews.com/privkey.pem
+    Include /etc/letsencrypt/options-ssl-apache.conf
+
+    # Your proxies
+    ProxyPass /backend/ http://127.0.0.1:5150/api/
+    ProxyPassReverse /backend/ http://127.0.0.1:5150/api/
+
+    # CORS Headers for /backend path
+    <Location /backend>
+        Header always set Access-Control-Allow-Origin "*"
+        Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Header always set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+        
+        # Handle OPTIONS method for preflight requests
+        RewriteEngine On
+        RewriteCond %{REQUEST_METHOD} OPTIONS
+        RewriteRule ^(.*)$ $1 [R=200,L]
+    </Location>
+</VirtualHost>
+
+# Make sure these modules are enabled:
+# sudo a2enmod headers
+# sudo a2enmod rewrite
+# sudo a2enmod proxy
+# sudo a2enmod proxy_http
+# sudo systemctl restart apache2
