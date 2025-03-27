@@ -110,7 +110,12 @@ const theme = createTheme({
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  
+  // Show nothing while checking authentication
+  if (loading) {
+    return null;
+  }
   
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
