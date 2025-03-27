@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Typography, 
   IconButton, 
@@ -11,10 +11,13 @@ import {
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import EditIcon from '@mui/icons-material/Edit';
 import { NewsItem as NewsItemType } from '../types';
 import { styled } from '@mui/system';
 import VideoThumbnail from './VideoThumbnail';
 import { isVideoUrl } from '../utils/videoUtils';
+import { useAuth } from '../context/AuthContext';
+import EditNewsItemModal from './EditNewsItemModal';
 
 // Styled components for newspaper look
 const NewspaperCard = styled(Paper)(({ theme }) => ({
@@ -70,9 +73,13 @@ const NewsSummary = styled(Typography)(({ theme }) => ({
 interface NewsItemProps {
   item: NewsItemType;
   onToggleFavorite: (id: string) => void;
+  onItemUpdated?: () => void;
 }
 
-const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
+const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite, onItemUpdated }) => {
+  const { user } = useAuth();
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  
   const formattedDate = new Date(item.date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -81,6 +88,12 @@ const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
   
   // Use _id if available, otherwise fall back to id
   const itemId = item._id || item.id || '';
+  
+  const handleEditSuccess = () => {
+    if (onItemUpdated) {
+      onItemUpdated();
+    }
+  };
   
   return (
     <NewspaperCard elevation={0}>
@@ -107,7 +120,7 @@ const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
       <Divider sx={{ my: 2 }} />
       
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton 
             onClick={() => onToggleFavorite(itemId)}
             color={item.isFavorite ? "secondary" : "default"}
@@ -121,9 +134,30 @@ const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
           >
             {item.isFavorite ? <StarIcon /> : <StarBorderIcon />}
           </IconButton>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" color="text.secondary" sx={{ mr: 2 }}>
             {item.isFavorite ? 'Saved to favorites' : 'Add to favorites'}
           </Typography>
+          
+          {/* Edit button - only visible to admins */}
+          {user?.isAdmin && (
+            <IconButton
+              onClick={() => setEditModalOpen(true)}
+              color="primary"
+              aria-label="Edit news item"
+              size="small"
+              sx={{ 
+                ml: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(25, 118, 210, 0.04)'
+                }
+              }}
+            >
+              <EditIcon fontSize="small" />
+              <Typography variant="caption" sx={{ ml: 0.5 }}>
+                Edit
+              </Typography>
+            </IconButton>
+          )}
         </Box>
         
         <Link 
@@ -148,6 +182,14 @@ const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
           <OpenInNewIcon fontSize="small" />
         </Link>
       </Box>
+      
+      {/* Edit Modal */}
+      <EditNewsItemModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        item={item}
+        onSuccess={handleEditSuccess}
+      />
     </NewspaperCard>
   );
 };

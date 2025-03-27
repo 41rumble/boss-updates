@@ -74,7 +74,8 @@ const NewsPage = () => {
       <NewsList 
         items={filteredItems} 
         loading={loading} 
-        onToggleFavorite={handleToggleFavorite} 
+        onToggleFavorite={handleToggleFavorite}
+        onItemUpdated={fetchNewsItems}
       />
 
       <Snackbar 

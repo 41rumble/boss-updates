@@ -48,6 +48,7 @@ const FavoritesPage = () => {
         items={newsItems} 
         loading={loading} 
         onToggleFavorite={handleToggleFavorite}
+        onItemUpdated={fetchFavorites}
         emptyMessage="No favorites yet. Star items from the News page to add them here."
       />
 

@@ -7,6 +7,7 @@ interface NewsListProps {
   items: NewsItemType[];
   loading: boolean;
   onToggleFavorite: (id: string) => void;
+  onItemUpdated?: () => void;
   emptyMessage?: string;
 }
 
@@ -14,6 +15,7 @@ const NewsList: React.FC<NewsListProps> = ({
   items, 
   loading, 
   onToggleFavorite,
+  onItemUpdated,
   emptyMessage = "No news items available."
 }) => {
   if (loading) {
@@ -38,9 +40,10 @@ const NewsList: React.FC<NewsListProps> = ({
     <Box>
       {items.map(item => (
         <NewsItem 
-          key={item.id} 
+          key={item.id || item._id} 
           item={item} 
-          onToggleFavorite={onToggleFavorite} 
+          onToggleFavorite={onToggleFavorite}
+          onItemUpdated={onItemUpdated}
         />
       ))}
     </Box>
