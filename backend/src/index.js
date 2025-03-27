@@ -18,20 +18,13 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Configure CORS based on environment
-if (process.env.NODE_ENV === 'production') {
-  app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'https://dougsnews.com',
-    credentials: true
-  }));
-} else {
-  // In development, allow all origins
-  app.use(cors({
-    origin: '*',
-    credentials: true
-  }));
-  console.log('CORS enabled for all origins in development mode');
-}
+// Configure CORS to allow requests from any origin
+app.use(cors({
+  origin: '*', // Allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+console.log('CORS enabled for all origins');
 
 app.use(morgan('dev'));
 
@@ -57,11 +50,32 @@ app.get('/api', (req, res) => {
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../build')));
+  const buildPath = path.join(__dirname, '../../build');
   
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../build', 'index.html'));
-  });
+  // Check if the build directory exists
+  try {
+    if (require('fs').existsSync(buildPath)) {
+      app.use(express.static(buildPath));
+      
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(buildPath, 'index.html'));
+      });
+    } else {
+      console.warn('Build directory not found. Static file serving is disabled.');
+      
+      // Fallback for all non-API routes
+      app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api')) {
+          res.json({ 
+            message: "Frontend not built. Please run 'npm run build' to create the frontend build.",
+            apiStatus: "API is running and available at /api"
+          });
+        }
+      });
+    }
+  } catch (err) {
+    console.error('Error checking build directory:', err);
+  }
 }
 
 // Error handling middleware
