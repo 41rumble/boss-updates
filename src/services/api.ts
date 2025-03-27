@@ -4,8 +4,8 @@ import { NewsItem } from '../types';
 // Use the production URL in production, or localhost in development
 const API_URL = process.env.REACT_APP_API_URL || 
   (process.env.NODE_ENV === 'production' 
-    ? 'https://dougsnews.com/api' 
-    : 'http://localhost:5150/api');
+    ? 'https://www.dougsnews.com/backend/api' 
+    : 'https://www.dougsnews.com/backend/api');
 
 console.log('Using API URL:', API_URL);
 
