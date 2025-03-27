@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import * as apiService from '../services/api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -19,12 +20,6 @@ interface User {
   token?: string;
 }
 
-// Use the production URL in production, or localhost in development
-const API_URL = process.env.REACT_APP_API_URL || 
-  (process.env.NODE_ENV === 'production' 
-    ? 'https://dougsnews.com/api/auth' 
-    : 'http://localhost:5000/api/auth');
-
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
@@ -43,15 +38,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Configure axios with auth token
-  const setAuthToken = (token: string | null) => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    } else {
-      delete axios.defaults.headers.common['Authorization'];
-    }
-  };
-
   // Check if user is already logged in
   useEffect(() => {
     const checkAuth = () => {
@@ -59,7 +45,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userData = localStorage.getItem('user_data');
       
       if (token && userData) {
-        setAuthToken(token);
         setIsAuthenticated(true);
         setUser(JSON.parse(userData));
       }
@@ -77,9 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(null);
       
       // For demo purposes, we'll accept any login with password "password"
-      // In a real app, uncomment the API call below
+      // In a real app, use the API call below
       
-      // Simulated successful login
       if (password === 'password') {
         const user: User = {
           _id: '1',
@@ -93,23 +77,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('auth_token', user.token || '');
         localStorage.setItem('user_data', JSON.stringify(user));
         
-        setAuthToken(user.token || null);
         setIsAuthenticated(true);
         setUser(user);
         return true;
       }
       
-      /* Uncomment for real API integration
-      const response = await axios.post(`${API_URL}/login`, { email, password });
-      
-      if (response.data && response.data.token) {
-        localStorage.setItem('auth_token', response.data.token);
-        localStorage.setItem('user_data', JSON.stringify(response.data));
+      // Real API integration (uncomment for production)
+      /*
+      try {
+        const userData = await apiService.login(email, password);
         
-        setAuthToken(response.data.token);
-        setIsAuthenticated(true);
-        setUser(response.data);
-        return true;
+        if (userData && userData.token) {
+          localStorage.setItem('auth_token', userData.token);
+          localStorage.setItem('user_data', JSON.stringify(userData));
+          
+          setIsAuthenticated(true);
+          setUser(userData);
+          return true;
+        }
+      } catch (apiError) {
+        console.error('API login error:', apiError);
+        throw apiError;
       }
       */
       
@@ -135,9 +123,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(null);
       
       // For demo purposes, we'll simulate a successful registration
-      // In a real app, uncomment the API call below
+      // In a real app, use the API call below
       
-      // Simulated successful registration
       const user: User = {
         _id: '2',
         name: name,
@@ -150,22 +137,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('auth_token', user.token || '');
       localStorage.setItem('user_data', JSON.stringify(user));
       
-      setAuthToken(user.token || null);
       setIsAuthenticated(true);
       setUser(user);
       return true;
       
-      /* Uncomment for real API integration
-      const response = await axios.post(`${API_URL}/register`, { name, email, password });
-      
-      if (response.data && response.data.token) {
-        localStorage.setItem('auth_token', response.data.token);
-        localStorage.setItem('user_data', JSON.stringify(response.data));
+      // Real API integration (uncomment for production)
+      /*
+      try {
+        const userData = await apiService.register(name, email, password);
         
-        setAuthToken(response.data.token);
-        setIsAuthenticated(true);
-        setUser(response.data);
-        return true;
+        if (userData && userData.token) {
+          localStorage.setItem('auth_token', userData.token);
+          localStorage.setItem('user_data', JSON.stringify(userData));
+          
+          setIsAuthenticated(true);
+          setUser(userData);
+          return true;
+        }
+      } catch (apiError) {
+        console.error('API registration error:', apiError);
+        throw apiError;
       }
       */
       
@@ -188,7 +179,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_data');
-    setAuthToken(null);
     setIsAuthenticated(false);
     setUser(null);
   };
