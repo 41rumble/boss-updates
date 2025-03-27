@@ -63,12 +63,12 @@ api.interceptors.response.use(
 );
 
 export const getNewsItems = async (params?: { archived?: boolean }): Promise<NewsItem[]> => {
-  // Convert boolean parameters to strings for the API
-  const queryParams = params ? { ...params } : {};
+  // Create a new object with string values for the API
+  const queryParams: Record<string, string> = {};
   
-  // Convert boolean to string 'true' or 'false'
-  if (queryParams.archived !== undefined) {
-    queryParams.archived = String(queryParams.archived);
+  // Only add parameters that are defined
+  if (params?.archived !== undefined) {
+    queryParams.archived = params.archived ? 'true' : 'false';
   }
   
   const response = await api.get('/news', { params: queryParams });
@@ -76,18 +76,18 @@ export const getNewsItems = async (params?: { archived?: boolean }): Promise<New
 };
 
 export const getFavorites = async (params?: { adminOnly?: boolean, userOnly?: boolean, archived?: boolean }): Promise<NewsItem[]> => {
-  // Convert boolean parameters to strings for the API
-  const queryParams = params ? { ...params } : {};
+  // Create a new object with string values for the API
+  const queryParams: Record<string, string> = {};
   
-  // Convert boolean values to strings
-  if (queryParams.archived !== undefined) {
-    queryParams.archived = String(queryParams.archived);
+  // Only add parameters that are defined
+  if (params?.archived !== undefined) {
+    queryParams.archived = params.archived ? 'true' : 'false';
   }
-  if (queryParams.adminOnly !== undefined) {
-    queryParams.adminOnly = String(queryParams.adminOnly);
+  if (params?.adminOnly !== undefined) {
+    queryParams.adminOnly = params.adminOnly ? 'true' : 'false';
   }
-  if (queryParams.userOnly !== undefined) {
-    queryParams.userOnly = String(queryParams.userOnly);
+  if (params?.userOnly !== undefined) {
+    queryParams.userOnly = params.userOnly ? 'true' : 'false';
   }
   
   const response = await api.get('/news/favorites', { params: queryParams });
