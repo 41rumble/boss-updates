@@ -1,0 +1,28 @@
+{
+  "news": [
+    {
+      "id": "1",
+      "title": "Quarterly Report Summary",
+      "summary": "Our Q1 results exceeded expectations with a 15% increase in revenue compared to last year.",
+      "link": "https://example.com/report",
+      "date": "2023-04-15",
+      "isFavorite": false
+    },
+    {
+      "id": "2",
+      "title": "New Client Acquisition",
+      "summary": "We have successfully onboarded XYZ Corp as a new client with an estimated annual contract value of $500K.",
+      "link": "https://example.com/client",
+      "date": "2023-04-10",
+      "isFavorite": true
+    },
+    {
+      "id": "3",
+      "title": "Product Launch Update",
+      "summary": "The new product launch is scheduled for May 15th. Marketing materials are ready for review.",
+      "link": "https://example.com/product",
+      "date": "2023-04-05",
+      "isFavorite": false
+    }
+  ]
+}
