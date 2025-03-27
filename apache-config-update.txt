@@ -38,6 +38,18 @@
         RewriteCond %{REQUEST_METHOD} OPTIONS
         RewriteRule ^(.*)$ $1 [R=200,L]
     </Location>
+    
+    # Also add CORS headers for /backend/api path to be sure
+    <Location /backend/api>
+        Header always set Access-Control-Allow-Origin "*"
+        Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Header always set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+        
+        # Handle OPTIONS method for preflight requests
+        RewriteEngine On
+        RewriteCond %{REQUEST_METHOD} OPTIONS
+        RewriteRule ^(.*)$ $1 [R=200,L]
+    </Location>
 </VirtualHost>
 
 # Make sure these modules are enabled:
