@@ -5,7 +5,7 @@ import { NewsItem } from '../types';
 const API_URL = process.env.REACT_APP_API_URL || 
   (process.env.NODE_ENV === 'production' 
     ? 'https://dougsnews.com/api' 
-    : 'http://localhost:5000/api');
+    : 'http://localhost:5001/api'); // Updated to port 5001
 
 // Create axios instance
 const api = axios.create({
