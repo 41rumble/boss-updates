@@ -63,24 +63,12 @@ api.interceptors.response.use(
 );
 
 export const getNewsItems = async (params?: { archived?: boolean }): Promise<NewsItem[]> => {
-  // If archived parameter is not explicitly set, default to showing non-archived items
-  const queryParams = params || {};
-  if (queryParams.archived === undefined) {
-    queryParams.archived = false;
-  }
-  
-  const response = await api.get('/news', { params: queryParams });
+  const response = await api.get('/news', { params });
   return response.data;
 };
 
 export const getFavorites = async (params?: { adminOnly?: boolean, userOnly?: boolean, archived?: boolean }): Promise<NewsItem[]> => {
-  // By default, don't show archived items in favorites/keepers
-  const queryParams = params || {};
-  if (queryParams.archived === undefined) {
-    queryParams.archived = false;
-  }
-  
-  const response = await api.get('/news/favorites', { params: queryParams });
+  const response = await api.get('/news/favorites', { params });
   return response.data;
 };
 
@@ -89,113 +77,34 @@ export const getArchivedItems = async (): Promise<NewsItem[]> => {
 };
 
 export const toggleFavorite = async (id: string): Promise<NewsItem> => {
-  try {
-    // First try the API endpoint
-    const response = await api.post(`/news/${id}/toggle-favorite`);
-    return response.data;
-  } catch (error) {
-    // If the API endpoint fails, fall back to a direct update
-    console.log('Falling back to direct update for toggle favorite');
-    const item = await getItemById(id);
-    if (!item) {
-      throw new Error('Item not found');
-    }
-    
-    const updatedItem = { ...item, isFavorite: !item.isFavorite };
-    return updateNewsItem(id, updatedItem);
-  }
+  const response = await api.post(`/news/${id}/toggle-favorite`);
+  return response.data;
 };
 
 export const toggleAdminKeeper = async (id: string): Promise<NewsItem> => {
-  try {
-    // First try the API endpoint
-    const response = await api.post(`/news/${id}/toggle-admin-keeper`);
-    return response.data;
-  } catch (error) {
-    // If the API endpoint fails, fall back to a direct update
-    console.log('Falling back to direct update for toggle admin keeper');
-    const item = await getItemById(id);
-    if (!item) {
-      throw new Error('Item not found');
-    }
-    
-    const updatedItem = { ...item, isAdminKeeper: !item.isAdminKeeper };
-    return updateNewsItem(id, updatedItem);
-  }
+  const response = await api.post(`/news/${id}/toggle-admin-keeper`);
+  return response.data;
 };
 
 export const markAsRead = async (id: string): Promise<NewsItem> => {
-  try {
-    // First try the API endpoint
-    const response = await api.post(`/news/${id}/mark-read`);
-    return response.data;
-  } catch (error) {
-    // If the API endpoint fails, fall back to a direct update
-    console.log('Falling back to direct update for mark as read');
-    const item = await getItemById(id);
-    if (!item) {
-      throw new Error('Item not found');
-    }
-    
-    const updatedItem = { 
-      ...item, 
-      isRead: true,
-      lastReadAt: new Date().toISOString()
-    };
-    return updateNewsItem(id, updatedItem);
-  }
+  const response = await api.post(`/news/${id}/mark-read`);
+  return response.data;
 };
 
 export const archiveItem = async (id: string): Promise<NewsItem> => {
-  try {
-    // First try the API endpoint
-    const response = await api.post(`/news/${id}/archive`);
-    return response.data;
-  } catch (error) {
-    // If the API endpoint fails, fall back to a direct update
-    // This is useful for the mock environment where we don't have specific endpoints
-    console.log('Falling back to direct update for archive');
-    const item = await getItemById(id);
-    if (!item) {
-      throw new Error('Item not found');
-    }
-    
-    const updatedItem = { ...item, isArchived: true };
-    return updateNewsItem(id, updatedItem);
-  }
+  const response = await api.post(`/news/${id}/archive`);
+  return response.data;
 };
 
 export const unarchiveItem = async (id: string): Promise<NewsItem> => {
-  try {
-    // First try the API endpoint
-    const response = await api.post(`/news/${id}/unarchive`);
-    return response.data;
-  } catch (error) {
-    // If the API endpoint fails, fall back to a direct update
-    console.log('Falling back to direct update for unarchive');
-    const item = await getItemById(id);
-    if (!item) {
-      throw new Error('Item not found');
-    }
-    
-    const updatedItem = { ...item, isArchived: false };
-    return updateNewsItem(id, updatedItem);
-  }
+  const response = await api.post(`/news/${id}/unarchive`);
+  return response.data;
 };
 
 // Helper function to get a single item by ID
 export const getItemById = async (id: string): Promise<NewsItem | null> => {
-  try {
-    const response = await api.get(`/news/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching item by ID:', error);
-    
-    // For mock environment, try to find the item in all news
-    const allItems = await getNewsItems({ archived: undefined });
-    const item = allItems.find(item => (item._id || item.id) === id);
-    return item || null;
-  }
+  const response = await api.get(`/news/${id}`);
+  return response.data;
 };
 
 export const addNewsItem = async (newsItem: Omit<NewsItem, 'id' | 'date' | 'isFavorite' | 'isAdminKeeper' | 'isRead' | 'isArchived'>): Promise<NewsItem> => {
