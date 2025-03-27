@@ -21,8 +21,11 @@ const ThumbnailContainer = styled(Paper)(({ theme }) => ({
   transition: 'transform 0.3s ease',
   // Add max-width for desktop screens to prevent thumbnails from dominating the space
   [theme.breakpoints.up('md')]: {
-    maxWidth: '500px',
+    maxWidth: '400px',
     margin: '16px auto',
+  },
+  [theme.breakpoints.up('lg')]: {
+    maxWidth: '450px',
   },
   '&:hover': {
     transform: 'scale(1.02)',
@@ -104,7 +107,7 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title }) => {
         />
         <VideoOverlay />
         <PlayButton aria-label="play video">
-          <PlayArrowIcon sx={{ fontSize: 60 }} />
+          <PlayArrowIcon sx={{ fontSize: { xs: 60, md: 50 } }} />
         </PlayButton>
         {title && <VideoTitle variant="body2">{title}</VideoTitle>}
       </ThumbnailContainer>
