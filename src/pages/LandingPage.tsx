@@ -232,7 +232,7 @@ const LandingPage = () => {
       >
         <Container maxWidth="lg">
           <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <AnimatedBox>
                 <NewspaperTitle variant="h1" sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' } }}>
                   DOUG'S NEWS
@@ -288,7 +288,7 @@ const LandingPage = () => {
                 </Box>
               </AnimatedBox>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <AnimatedBox sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Box
                   component="img"
@@ -324,7 +324,7 @@ const LandingPage = () => {
           
           <Grid container spacing={4}>
             {featuredNews.map((item) => (
-              <Grid item xs={12} md={4} key={item.id}>
+              <Grid xs={12} md={4} key={item.id}>
                 <FeatureCard>
                   <CardMedia
                     component="img"
@@ -422,7 +422,7 @@ const LandingPage = () => {
       >
         <Container maxWidth="lg">
           <Grid container spacing={4}>
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <Typography variant="h6" gutterBottom>
                 Doug's News
               </Typography>
@@ -430,9 +430,9 @@ const LandingPage = () => {
                 Your personal news dashboard for efficient communication.
               </Typography>
             </Grid>
-            <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
+            <Grid xs={12} md={6} sx={{ display: 'flex', justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
               <Typography variant="body2">
-                Â© {new Date().getFullYear()} Doug's News. All rights reserved.
+                © {new Date().getFullYear()} Doug's News. All rights reserved.
               </Typography>
             </Grid>
           </Grid>
