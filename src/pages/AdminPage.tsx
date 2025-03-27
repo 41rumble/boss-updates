@@ -219,13 +219,22 @@ const AdminPage = () => {
   
   const handleArchive = async (id: string) => {
     try {
-      await archiveItem(id);
+      const updatedItem = await archiveItem(id);
       
       // Remove the item from the current list
       if (tabValue === 1) {
-        setAllNewsItems(prevItems => prevItems.filter(item => item._id !== id));
+        setAllNewsItems(prevItems => prevItems.filter(item => 
+          (item._id || item.id) !== id
+        ));
       } else if (tabValue === 2) {
-        setKeeperItems(prevItems => prevItems.filter(item => item._id !== id));
+        setKeeperItems(prevItems => prevItems.filter(item => 
+          (item._id || item.id) !== id
+        ));
+      }
+      
+      // Add the item to the archived items list if we're on the archive tab
+      if (tabValue === 3) {
+        setArchivedItems(prevItems => [...prevItems, updatedItem]);
       }
       
       showSnackbar('Item archived successfully', 'success');
@@ -237,11 +246,20 @@ const AdminPage = () => {
   
   const handleUnarchive = async (id: string) => {
     try {
-      await unarchiveItem(id);
+      const updatedItem = await unarchiveItem(id);
       
       // Remove the item from the archive list
       if (tabValue === 3) {
-        setArchivedItems(prevItems => prevItems.filter(item => item._id !== id));
+        setArchivedItems(prevItems => prevItems.filter(item => 
+          (item._id || item.id) !== id
+        ));
+      }
+      
+      // Add the item back to the appropriate list if we're on that tab
+      if (tabValue === 1) {
+        setAllNewsItems(prevItems => [...prevItems, updatedItem]);
+      } else if (tabValue === 2 && (updatedItem.isFavorite || updatedItem.isAdminKeeper)) {
+        setKeeperItems(prevItems => [...prevItems, updatedItem]);
       }
       
       showSnackbar('Item unarchived successfully', 'success');

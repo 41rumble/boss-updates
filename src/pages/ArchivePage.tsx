@@ -26,7 +26,11 @@ const ArchivePage = () => {
     try {
       setLoading(true);
       const data = await getArchivedItems();
-      setNewsItems(data);
+      
+      // Ensure we only display items that are actually archived
+      const archivedData = data.filter(item => item.isArchived === true);
+      setNewsItems(archivedData);
+      
       setError(null);
     } catch (err) {
       console.error('Error fetching archived items:', err);
