@@ -99,7 +99,7 @@ const featuredNews = [
   {
     id: 1,
     title: 'Streamlined Communication',
-    summary: 'Keep your boss informed with regular updates in a clean, organized format.',
+    summary: 'Keep Doug informed with regular updates in a clean, organized format.',
     image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
   },
   {
@@ -260,7 +260,7 @@ const LandingPage = () => {
                     maxWidth: '90%'
                   }}
                 >
-                  Keep your boss informed with regular updates in a clean, professional format. 
+                  Keep Doug informed with regular updates in a clean, professional format. 
                   Doug's News provides a streamlined way to share important information, links, 
                   and updates in a newspaper-style interface.
                 </Typography>
@@ -377,11 +377,11 @@ const LandingPage = () => {
             }}
           >
             <Typography variant="body1" paragraph>
-              Doug's News was created to solve the common challenge of keeping your boss informed with regular updates in a clean, organized format.
+              Doug's News was created to solve the common challenge of keeping Doug informed with regular updates in a clean, organized format.
             </Typography>
             
             <Typography variant="body1" paragraph>
-              Our newspaper-style interface provides a familiar and professional way to present information, making it easy for your boss to quickly scan and understand key updates.
+              Our newspaper-style interface provides a familiar and professional way to present information, making it easy for Doug to quickly scan and understand key updates.
             </Typography>
             
             <Typography variant="body1" paragraph>
