@@ -231,8 +231,8 @@ const LandingPage = () => {
         }}
       >
         <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
-            <Grid xs={12} md={6}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, alignItems: 'center' }}>
+            <Box sx={{ flex: 1, width: '100%' }}>
               <AnimatedBox>
                 <NewspaperTitle variant="h1" sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' } }}>
                   DOUG'S NEWS
@@ -287,8 +287,8 @@ const LandingPage = () => {
                   </Button>
                 </Box>
               </AnimatedBox>
-            </Grid>
-            <Grid xs={12} md={6}>
+            </Box>
+            <Box sx={{ flex: 1, width: '100%' }}>
               <AnimatedBox sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Box
                   component="img"
@@ -304,8 +304,8 @@ const LandingPage = () => {
                   }}
                 />
               </AnimatedBox>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Container>
       </Box>
 
@@ -322,9 +322,9 @@ const LandingPage = () => {
             Key Features
           </Typography>
           
-          <Grid container spacing={4}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {featuredNews.map((item) => (
-              <Grid xs={12} md={4} key={item.id}>
+              <Box key={item.id} sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(33.333% - 32px)' } }}>
                 <FeatureCard>
                   <CardMedia
                     component="img"
@@ -341,9 +341,9 @@ const LandingPage = () => {
                     </Typography>
                   </CardContent>
                 </FeatureCard>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         </Container>
       </Box>
 
@@ -421,21 +421,21 @@ const LandingPage = () => {
         }}
       >
         <Container maxWidth="lg">
-          <Grid container spacing={4}>
-            <Grid xs={12} md={6}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
+            <Box sx={{ flex: 1 }}>
               <Typography variant="h6" gutterBottom>
                 Doug's News
               </Typography>
               <Typography variant="body2">
                 Your personal news dashboard for efficient communication.
               </Typography>
-            </Grid>
-            <Grid xs={12} md={6} sx={{ display: 'flex', justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
+            </Box>
+            <Box sx={{ flex: 1, display: 'flex', justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
               <Typography variant="body2">
                 © {new Date().getFullYear()} Doug's News. All rights reserved.
               </Typography>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Container>
       </Box>
     </Box>

@@ -19,15 +19,18 @@ import {
   Divider
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { 
-  Visibility, 
-  VisibilityOff, 
-  ArrowBack, 
-  Login as LoginIcon, 
-  PersonAdd as RegisterIcon 
-} from '@mui/icons-material';
+// Import icons individually in MUI v7
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Login from '@mui/icons-material/Login';
+import PersonAdd from '@mui/icons-material/PersonAdd';
 import { useAuth } from '../context/AuthContext';
 import { styled, keyframes } from '@mui/system';
+
+// Rename for clarity
+const LoginIcon = Login;
+const RegisterIcon = PersonAdd;
 
 // Animation keyframes
 const fadeIn = keyframes`
@@ -322,18 +325,18 @@ const LoginPage = () => {
                 )}
               </ShimmerButton>
 
-              <Grid container sx={{ mt: 3 }}>
-                <Grid item xs>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                <Box>
                   <Link component={RouterLink} to="/" variant="body2">
                     Forgot password?
                   </Link>
-                </Grid>
-                <Grid item>
+                </Box>
+                <Box>
                   <Typography variant="body2" color="text.secondary">
                     Demo: any email with password "password"
                   </Typography>
-                </Grid>
-              </Grid>
+                </Box>
+              </Box>
             </Box>
           </TabPanel>
 
