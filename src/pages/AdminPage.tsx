@@ -79,6 +79,7 @@ const AdminPage = () => {
             id="link"
             value={link}
             onChange={(e) => setLink(e.target.value)}
+            helperText="YouTube and Vimeo links will automatically display video thumbnails"
           />
           <Button
             type="submit"

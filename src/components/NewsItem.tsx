@@ -13,6 +13,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { NewsItem as NewsItemType } from '../types';
 import { styled } from '@mui/system';
+import VideoThumbnail from './VideoThumbnail';
+import { isVideoUrl } from '../utils/videoUtils';
 
 // Styled components for newspaper look
 const NewspaperCard = styled(Paper)(({ theme }) => ({
@@ -97,6 +99,11 @@ const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
         {item.summary}
       </NewsSummary>
       
+      {/* Display video thumbnail if the link is a video URL */}
+      {item.link && isVideoUrl(item.link) && (
+        <VideoThumbnail url={item.link} title={item.title} />
+      )}
+      
       <Divider sx={{ my: 2 }} />
       
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -136,7 +143,7 @@ const NewsItem: React.FC<NewsItemProps> = ({ item, onToggleFavorite }) => {
           }}
         >
           <Typography variant="button" sx={{ mr: 0.5 }}>
-            Read Full Article
+            {isVideoUrl(item.link || '') ? 'Watch Video' : 'Read Full Article'}
           </Typography>
           <OpenInNewIcon fontSize="small" />
         </Link>
