@@ -6,7 +6,6 @@ import {
   Button, 
   Paper, 
   Container,
-  Grid,
   Link,
   InputAdornment,
   IconButton,
@@ -15,8 +14,7 @@ import {
   Alert,
   useTheme,
   Tabs,
-  Tab,
-  Divider
+  Tab
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // Import icons individually in MUI v7

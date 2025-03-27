@@ -105,6 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       */
       
+      // For demo purposes, we'll just show an error for non-matching passwords
       console.log('Login failed: Invalid credentials');
       setError('Invalid email or password. Use any email with password: "password"');
       return false;
@@ -165,7 +166,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       */
       
-      setError('Registration failed');
+      // For demo purposes, we'll just show an error
+      console.log('Registration not implemented in demo mode');
+      setError('Registration is not available in demo mode');
       return false;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
