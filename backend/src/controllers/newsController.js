@@ -3,7 +3,17 @@ const NewsItem = require('../models/NewsItem');
 // Get all news items
 exports.getAllNews = async (req, res) => {
   try {
-    const newsItems = await NewsItem.find().sort({ date: -1 });
+    const { archived } = req.query;
+    
+    // Build query based on parameters
+    const query = {};
+    
+    // Filter by archive status if specified
+    if (archived !== undefined) {
+      query.isArchived = archived === 'true';
+    }
+    
+    const newsItems = await NewsItem.find(query).sort({ date: -1 });
     res.json(newsItems);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -37,7 +47,10 @@ exports.createNews = async (req, res) => {
       summary,
       link,
       date: new Date(),
-      isFavorite: false
+      isFavorite: false,
+      isAdminKeeper: false,
+      isArchived: false,
+      isRead: false
     });
     
     const savedItem = await newsItem.save();
@@ -103,9 +116,107 @@ exports.toggleFavorite = async (req, res) => {
 // Get all favorite news items
 exports.getFavorites = async (req, res) => {
   try {
-    const favorites = await NewsItem.find({ isFavorite: true }).sort({ date: -1 });
+    const { adminOnly, userOnly, archived } = req.query;
+    
+    // Build query based on parameters
+    let query = {};
+    
+    // Filter by admin or user keepers
+    if (adminOnly === 'true') {
+      query.isAdminKeeper = true;
+    } else if (userOnly === 'true') {
+      query.isFavorite = true;
+    } else {
+      // By default, show items that are either user favorites or admin keepers
+      query = {
+        $or: [
+          { isFavorite: true },
+          { isAdminKeeper: true }
+        ]
+      };
+    }
+    
+    // Filter by archive status if specified
+    if (archived !== undefined) {
+      query.isArchived = archived === 'true';
+    }
+    
+    const favorites = await NewsItem.find(query).sort({ date: -1 });
     res.json(favorites);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// Toggle admin keeper status
+exports.toggleAdminKeeper = async (req, res) => {
+  try {
+    const newsItem = await NewsItem.findById(req.params.id);
+    
+    if (!newsItem) {
+      return res.status(404).json({ message: 'News item not found' });
+    }
+    
+    newsItem.isAdminKeeper = !newsItem.isAdminKeeper;
+    const updatedItem = await newsItem.save();
+    
+    res.json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Archive a news item
+exports.archiveItem = async (req, res) => {
+  try {
+    const newsItem = await NewsItem.findById(req.params.id);
+    
+    if (!newsItem) {
+      return res.status(404).json({ message: 'News item not found' });
+    }
+    
+    newsItem.isArchived = true;
+    const updatedItem = await newsItem.save();
+    
+    res.json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Unarchive a news item
+exports.unarchiveItem = async (req, res) => {
+  try {
+    const newsItem = await NewsItem.findById(req.params.id);
+    
+    if (!newsItem) {
+      return res.status(404).json({ message: 'News item not found' });
+    }
+    
+    newsItem.isArchived = false;
+    const updatedItem = await newsItem.save();
+    
+    res.json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Mark a news item as read
+exports.markAsRead = async (req, res) => {
+  try {
+    const newsItem = await NewsItem.findById(req.params.id);
+    
+    if (!newsItem) {
+      return res.status(404).json({ message: 'News item not found' });
+    }
+    
+    newsItem.isRead = true;
+    newsItem.lastReadAt = new Date();
+    const updatedItem = await newsItem.save();
+    
+    res.json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };

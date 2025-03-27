@@ -23,6 +23,22 @@ const NewsItemSchema = new mongoose.Schema({
   isFavorite: {
     type: Boolean,
     default: false
+  },
+  isAdminKeeper: {
+    type: Boolean,
+    default: false
+  },
+  isArchived: {
+    type: Boolean,
+    default: false
+  },
+  isRead: {
+    type: Boolean,
+    default: false
+  },
+  lastReadAt: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true
