@@ -124,6 +124,22 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Admin route component
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  // Show nothing while checking authentication
+  if (loading) {
+    return null;
+  }
+  
+  if (!user?.isAdmin) {
+    return <Navigate to="/news" />;
+  }
+  
+  return <>{children}</>;
+};
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -140,7 +156,11 @@ function App() {
             }>
               <Route index element={<NewsPage />} />
               <Route path="keepers" element={<KeepersPage />} />
-              <Route path="admin" element={<AdminPage />} />
+              <Route path="admin" element={
+                <AdminRoute>
+                  <AdminPage />
+                </AdminRoute>
+              } />
             </Route>
           </Routes>
         </BrowserRouter>

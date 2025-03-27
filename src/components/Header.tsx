@@ -154,12 +154,14 @@ const Header = () => {
                       </ListItemIcon>
                       <ListItemText primary="Keepers" />
                     </ListItemButton>
-                    <ListItemButton component={RouterLink} to="/news/admin">
-                      <ListItemIcon>
-                        <AdminPanelSettingsIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Admin" />
-                    </ListItemButton>
+                    {user?.isAdmin && (
+                      <ListItemButton component={RouterLink} to="/news/admin">
+                        <ListItemIcon>
+                          <AdminPanelSettingsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Admin" />
+                      </ListItemButton>
+                    )}
                     <Divider />
                     <ListItemButton onClick={handleLogout}>
                       <ListItemIcon>
@@ -192,15 +194,17 @@ const Header = () => {
                 >
                   Keepers
                 </Button>
-                <Button 
-                  color="inherit" 
-                  component={RouterLink} 
-                  to="/news/admin"
-                  startIcon={<AdminPanelSettingsIcon />}
-                  sx={{ fontWeight: 500 }}
-                >
-                  Admin
-                </Button>
+                {user?.isAdmin && (
+                  <Button 
+                    color="inherit" 
+                    component={RouterLink} 
+                    to="/news/admin"
+                    startIcon={<AdminPanelSettingsIcon />}
+                    sx={{ fontWeight: 500 }}
+                  >
+                    Admin
+                  </Button>
+                )}
               </Box>
               
               <Box sx={{ flexGrow: 1 }} />
