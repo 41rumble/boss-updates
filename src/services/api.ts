@@ -14,9 +14,8 @@ const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
   },
+  // Don't set CORS headers on the client - they need to come from the server
   withCredentials: false, // Disable credentials for now to simplify CORS
 });
 

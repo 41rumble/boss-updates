@@ -18,36 +18,17 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Configure CORS to allow requests from specific origins
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:53490',
-  'http://localhost:59851',
-  'https://dougsnews.com',
-  'https://www.dougsnews.com'
-];
-
+// Configure CORS to allow all origins
 app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) === -1) {
-      console.log('CORS blocked origin:', origin);
-      return callback(null, true); // Still allow it for now, but log it
-    }
-    
-    return callback(null, true);
-  },
-  credentials: true,
+  origin: '*', // Allow all origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Add OPTIONS handling for preflight requests
 app.options('*', cors());
 
-console.log('CORS enabled for specific origins with credentials support');
+console.log('CORS enabled for all origins');
 
 app.use(morgan('dev'));
 
@@ -101,34 +82,10 @@ if (process.env.NODE_ENV === 'production') {
   }
 }
 
-// CORS error handler
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
-});
-
-// Error handling middleware
+// Simple error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);
   console.error(err.stack);
-  
-  // Handle CORS errors specifically
-  if (err.message && err.message.includes('CORS')) {
-    return res.status(403).json({
-      message: 'CORS error: Cross-Origin Request Blocked',
-      error: process.env.NODE_ENV === 'production' ? {} : err,
-      origin: req.headers.origin,
-      allowedOrigins
-    });
-  }
   
   res.status(500).json({
     message: 'Something went wrong!',
