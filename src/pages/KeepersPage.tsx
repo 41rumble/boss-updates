@@ -19,7 +19,7 @@ const KeepersPage = () => {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<string | null>(null); // null = all, 'user' = user keepers, 'admin' = admin keepers
+  const [filter, setFilter] = useState<string>('all'); // 'all' = all keepers, 'user' = user keepers, 'admin' = admin keepers
 
   const fetchKeepers = async () => {
     try {
@@ -32,6 +32,7 @@ const KeepersPage = () => {
       } else if (filter === 'admin') {
         params = { adminOnly: true };
       }
+      // 'all' filter doesn't need special params
       
       const data = await getFavorites(params);
       setNewsItems(data);
@@ -50,9 +51,11 @@ const KeepersPage = () => {
   
   const handleFilterChange = (
     event: React.MouseEvent<HTMLElement>,
-    newFilter: string | null,
+    newFilter: string,
   ) => {
-    setFilter(newFilter);
+    if (newFilter !== null) {
+      setFilter(newFilter);
+    }
   };
 
   const handleToggleFavorite = async (id: string) => {
@@ -87,7 +90,7 @@ const KeepersPage = () => {
           aria-label="keeper filter"
           size="small"
         >
-          <ToggleButton value={null} aria-label="all keepers">
+          <ToggleButton value="all" aria-label="all keepers">
             All Keepers
           </ToggleButton>
           <ToggleButton value="user" aria-label="your keepers">
@@ -103,12 +106,12 @@ const KeepersPage = () => {
       
       <Divider sx={{ mb: 3 }} />
       
-      {filter && (
+      {filter !== 'all' && (
         <Box sx={{ mb: 2 }}>
           <Chip 
             label={filter === 'user' ? 'Showing your keepers' : 'Showing admin selections'} 
             color={filter === 'user' ? 'secondary' : 'primary'}
-            onDelete={() => setFilter(null)}
+            onDelete={() => setFilter('all')}
             icon={filter === 'user' ? <StarIcon /> : <BookmarkIcon />}
           />
         </Box>
