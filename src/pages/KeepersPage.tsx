@@ -26,13 +26,13 @@ const KeepersPage = () => {
       setLoading(true);
       
       // Get keepers based on filter
-      let params = {};
+      let params: any = { archived: false }; // Only show non-archived items
       if (filter === 'user') {
-        params = { userOnly: true };
+        params.userOnly = true;
       } else if (filter === 'admin') {
-        params = { adminOnly: true };
+        params.adminOnly = true;
       }
-      // 'all' filter doesn't need special params
+      // 'all' filter just needs the archived: false param
       
       const data = await getFavorites(params);
       setNewsItems(data);

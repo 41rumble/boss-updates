@@ -99,7 +99,8 @@ const AdminPage = () => {
   const fetchAllNewsItems = async () => {
     try {
       setLoadingNews(true);
-      const data = await getNewsItems();
+      // In admin view, show non-archived items by default
+      const data = await getNewsItems({ archived: false });
       setAllNewsItems(data);
     } catch (err) {
       console.error('Error fetching news items:', err);
@@ -112,7 +113,8 @@ const AdminPage = () => {
   const fetchKeepers = async () => {
     try {
       setLoadingKeepers(true);
-      const data = await getFavorites();
+      // In admin view, show non-archived keepers by default
+      const data = await getFavorites({ archived: false });
       setKeeperItems(data);
     } catch (err) {
       console.error('Error fetching keepers:', err);

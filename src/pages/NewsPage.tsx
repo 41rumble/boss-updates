@@ -14,7 +14,8 @@ const NewsPage = () => {
   const fetchNewsItems = async () => {
     try {
       setLoading(true);
-      const data = await getNewsItems();
+      // Explicitly request non-archived items only
+      const data = await getNewsItems({ archived: false });
       setNewsItems(data);
       setError(null);
     } catch (err) {
