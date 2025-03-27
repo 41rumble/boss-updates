@@ -7,6 +7,7 @@ const path = require('path');
 
 // Import routes
 const newsRoutes = require('./routes/news');
+const authRoutes = require('./routes/auth');
 
 // Load environment variables
 dotenv.config();
@@ -32,6 +33,15 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // Routes
 app.use('/api/news', newsRoutes);
+app.use('/api/auth', authRoutes);
+
+// Root route
+app.get('/api', (req, res) => {
+  res.json({ 
+    message: "Welcome to Doug's News API",
+    version: "1.0.0"
+  });
+});
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
@@ -55,4 +65,5 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Doug's News API is available at http://localhost:${PORT}/api`);
 });
