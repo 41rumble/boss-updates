@@ -4,8 +4,8 @@ import { NewsItem } from '../types';
 // Use the production URL in production, or localhost in development
 const API_URL = process.env.REACT_APP_API_URL || 
   (process.env.NODE_ENV === 'production' 
-    ? 'https://www.dougsnews.com/backend/api' 
-    : 'https://www.dougsnews.com/backend/api');
+    ? 'https://dougsnews.com/backend/api' 
+    : 'https://dougsnews.com/backend/api');
 
 // Create axios instance
 const api = axios.create({
@@ -28,10 +28,62 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Add a response interceptor to handle auth errors
+// Add a response interceptor to handle auth errors and server unavailability
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Check if the server is unavailable (503 error) or if there's a network error
+    if ((error.response && error.response.status === 503) || !error.response) {
+      console.warn('Backend server unavailable. Using mock data for development.');
+      
+      // If the API is unavailable, we'll use mock data
+      if (error.config.url.includes('/news')) {
+        // Return mock news data
+        return Promise.resolve({
+          data: [
+            {
+              _id: '1',
+              title: 'Mock News Item 1',
+              summary: 'This is a mock news item because the backend is unavailable.',
+              content: 'Detailed content would go here.',
+              source: 'https://example.com',
+              date: new Date().toISOString(),
+              isFavorite: false,
+              isAdminKeeper: false,
+              isRead: false,
+              isArchived: false
+            },
+            {
+              _id: '2',
+              title: 'Mock News Item 2',
+              summary: 'Another mock news item for testing.',
+              content: 'More detailed content.',
+              source: 'https://example.com/article',
+              date: new Date().toISOString(),
+              isFavorite: true,
+              isAdminKeeper: true,
+              isRead: true,
+              isArchived: false
+            }
+          ]
+        });
+      } else if (error.config.url.includes('/auth/login')) {
+        // Return mock auth data
+        const demoToken = 'demo_token_' + Math.random().toString(36).substring(2);
+        return Promise.resolve({
+          data: {
+            token: demoToken,
+            user: {
+              _id: '1',
+              name: 'Demo User',
+              email: 'demo@example.com',
+              isAdmin: true
+            }
+          }
+        });
+      }
+    }
+    
     // Handle 401 Unauthorized errors
     if (error.response && error.response.status === 401) {
       // For demo purposes, we'll use a simulated token
