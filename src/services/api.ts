@@ -31,10 +31,21 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Add a response interceptor to handle auth errors
+// Add a response interceptor to handle auth errors and CORS issues
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Log detailed error information for debugging
+    console.error('API Error:', {
+      message: error.message,
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      headers: error.config?.headers,
+      data: error.config?.data
+    });
+    
     // Handle 401 Unauthorized errors
     if (error.response && error.response.status === 401) {
       // For demo purposes, we'll use a simulated token
@@ -60,6 +71,15 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${demoToken}`;
         return axios(originalRequest);
       }
+    }
+    
+    // Handle CORS errors
+    if (error.message && error.message.includes('CORS')) {
+      console.error('CORS Error detected. This is likely due to cross-origin restrictions.');
+      console.error('Please ensure the server has proper CORS headers configured.');
+      
+      // You might want to show a user-friendly error message here
+      // or try an alternative API endpoint
     }
     
     return Promise.reject(error);
