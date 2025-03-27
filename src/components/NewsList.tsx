@@ -6,17 +6,27 @@ import { NewsItem as NewsItemType } from '../types';
 interface NewsListProps {
   items: NewsItemType[];
   loading: boolean;
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite?: (id: string) => void;
+  onToggleAdminKeeper?: (id: string) => void;
+  onArchive?: (id: string) => void;
+  onUnarchive?: (id: string) => void;
+  onMarkRead?: (id: string) => void;
   onItemUpdated?: () => void;
   emptyMessage?: string;
+  showAdminControls?: boolean;
 }
 
 const NewsList: React.FC<NewsListProps> = ({ 
   items, 
   loading, 
   onToggleFavorite,
+  onToggleAdminKeeper,
+  onArchive,
+  onUnarchive,
+  onMarkRead,
   onItemUpdated,
-  emptyMessage = "No news items available."
+  emptyMessage = "No news items available.",
+  showAdminControls = false
 }) => {
   if (loading) {
     return (
@@ -43,7 +53,12 @@ const NewsList: React.FC<NewsListProps> = ({
           key={item.id || item._id} 
           item={item} 
           onToggleFavorite={onToggleFavorite}
+          onToggleAdminKeeper={onToggleAdminKeeper}
+          onArchive={onArchive}
+          onUnarchive={onUnarchive}
+          onMarkRead={onMarkRead}
           onItemUpdated={onItemUpdated}
+          showAdminControls={showAdminControls}
         />
       ))}
     </Box>

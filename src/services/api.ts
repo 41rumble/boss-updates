@@ -62,14 +62,18 @@ api.interceptors.response.use(
   }
 );
 
-export const getNewsItems = async (): Promise<NewsItem[]> => {
-  const response = await api.get('/news');
+export const getNewsItems = async (params?: { archived?: boolean }): Promise<NewsItem[]> => {
+  const response = await api.get('/news', { params });
   return response.data;
 };
 
-export const getFavorites = async (): Promise<NewsItem[]> => {
-  const response = await api.get('/news/favorites');
+export const getFavorites = async (params?: { adminOnly?: boolean, userOnly?: boolean }): Promise<NewsItem[]> => {
+  const response = await api.get('/news/favorites', { params });
   return response.data;
+};
+
+export const getArchivedItems = async (): Promise<NewsItem[]> => {
+  return getNewsItems({ archived: true });
 };
 
 export const toggleFavorite = async (id: string): Promise<NewsItem> => {
@@ -77,12 +81,32 @@ export const toggleFavorite = async (id: string): Promise<NewsItem> => {
   return response.data;
 };
 
-export const addNewsItem = async (newsItem: Omit<NewsItem, 'id' | 'date' | 'isFavorite'>): Promise<NewsItem> => {
+export const toggleAdminKeeper = async (id: string): Promise<NewsItem> => {
+  const response = await api.post(`/news/${id}/toggle-admin-keeper`);
+  return response.data;
+};
+
+export const markAsRead = async (id: string): Promise<NewsItem> => {
+  const response = await api.post(`/news/${id}/mark-read`);
+  return response.data;
+};
+
+export const archiveItem = async (id: string): Promise<NewsItem> => {
+  const response = await api.post(`/news/${id}/archive`);
+  return response.data;
+};
+
+export const unarchiveItem = async (id: string): Promise<NewsItem> => {
+  const response = await api.post(`/news/${id}/unarchive`);
+  return response.data;
+};
+
+export const addNewsItem = async (newsItem: Omit<NewsItem, 'id' | 'date' | 'isFavorite' | 'isAdminKeeper' | 'isRead' | 'isArchived'>): Promise<NewsItem> => {
   const response = await api.post('/news', newsItem);
   return response.data;
 };
 
-export const updateNewsItem = async (id: string, newsItem: Partial<Omit<NewsItem, 'id' | 'date' | 'isFavorite'>>): Promise<NewsItem> => {
+export const updateNewsItem = async (id: string, newsItem: Partial<Omit<NewsItem, 'id' | 'date' | 'isFavorite' | 'isAdminKeeper' | 'isRead' | 'isArchived'>>): Promise<NewsItem> => {
   const response = await api.put(`/news/${id}`, newsItem);
   return response.data;
 };
