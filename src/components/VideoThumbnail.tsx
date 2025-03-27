@@ -19,6 +19,11 @@ const ThumbnailContainer = styled(Paper)(({ theme }) => ({
   borderRadius: theme.spacing(1),
   cursor: 'pointer',
   transition: 'transform 0.3s ease',
+  // Add max-width for desktop screens to prevent thumbnails from dominating the space
+  [theme.breakpoints.up('md')]: {
+    maxWidth: '500px',
+    margin: '16px auto',
+  },
   '&:hover': {
     transform: 'scale(1.02)',
   },
@@ -93,6 +98,8 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title }) => {
             width: '100%',
             height: 'auto',
             display: 'block',
+            objectFit: 'cover',
+            aspectRatio: '16/9',
           }}
         />
         <VideoOverlay />
