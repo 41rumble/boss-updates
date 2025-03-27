@@ -63,12 +63,34 @@ api.interceptors.response.use(
 );
 
 export const getNewsItems = async (params?: { archived?: boolean }): Promise<NewsItem[]> => {
-  const response = await api.get('/news', { params });
+  // Convert boolean parameters to strings for the API
+  const queryParams = params ? { ...params } : {};
+  
+  // Convert boolean to string 'true' or 'false'
+  if (queryParams.archived !== undefined) {
+    queryParams.archived = String(queryParams.archived);
+  }
+  
+  const response = await api.get('/news', { params: queryParams });
   return response.data;
 };
 
 export const getFavorites = async (params?: { adminOnly?: boolean, userOnly?: boolean, archived?: boolean }): Promise<NewsItem[]> => {
-  const response = await api.get('/news/favorites', { params });
+  // Convert boolean parameters to strings for the API
+  const queryParams = params ? { ...params } : {};
+  
+  // Convert boolean values to strings
+  if (queryParams.archived !== undefined) {
+    queryParams.archived = String(queryParams.archived);
+  }
+  if (queryParams.adminOnly !== undefined) {
+    queryParams.adminOnly = String(queryParams.adminOnly);
+  }
+  if (queryParams.userOnly !== undefined) {
+    queryParams.userOnly = String(queryParams.userOnly);
+  }
+  
+  const response = await api.get('/news/favorites', { params: queryParams });
   return response.data;
 };
 
