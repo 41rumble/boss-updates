@@ -15,6 +15,7 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText
 } from '@mui/material';
@@ -142,31 +143,31 @@ const Header = () => {
                   onKeyDown={toggleDrawer(false)}
                 >
                   <List>
-                    <ListItem component={RouterLink} to="/news" button>
+                    <ListItemButton component={RouterLink} to="/news">
                       <ListItemIcon>
                         <NewspaperIcon />
                       </ListItemIcon>
                       <ListItemText primary="Latest News" />
-                    </ListItem>
-                    <ListItem component={RouterLink} to="/news/favorites" button>
+                    </ListItemButton>
+                    <ListItemButton component={RouterLink} to="/news/favorites">
                       <ListItemIcon>
                         <StarIcon />
                       </ListItemIcon>
                       <ListItemText primary="Favorites" />
-                    </ListItem>
-                    <ListItem component={RouterLink} to="/news/admin" button>
+                    </ListItemButton>
+                    <ListItemButton component={RouterLink} to="/news/admin">
                       <ListItemIcon>
                         <AdminPanelSettingsIcon />
                       </ListItemIcon>
                       <ListItemText primary="Admin" />
-                    </ListItem>
+                    </ListItemButton>
                     <Divider />
-                    <ListItem button onClick={handleLogout}>
+                    <ListItemButton onClick={handleLogout}>
                       <ListItemIcon>
                         <LogoutIcon />
                       </ListItemIcon>
                       <ListItemText primary="Logout" />
-                    </ListItem>
+                    </ListItemButton>
                   </List>
                 </Box>
               </Drawer>
