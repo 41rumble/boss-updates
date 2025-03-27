@@ -63,35 +63,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       console.log('Login attempt:', { email, password });
       
-      // For demo purposes, we'll accept any login with password "password"
-      // In a real app, use the API call below
-      
-      if (password === 'password') {
-        console.log('Login successful with demo credentials');
-        
-        const user: User = {
-          _id: '1',
-          name: email.includes('admin') ? 'Admin User' : 'Doug',
-          email: email,
-          isAdmin: email.includes('admin'),
-          token: 'demo_token_' + Math.random().toString(36).substring(2)
-        };
-        
-        // Store auth data in localStorage
-        localStorage.setItem('auth_token', user.token || '');
-        localStorage.setItem('user_data', JSON.stringify(user));
-        
-        setIsAuthenticated(true);
-        setUser(user);
-        return true;
-      }
-      
-      // Real API integration (uncomment for production)
-      /*
+      // Try to use the real API first
       try {
+        console.log('Attempting API login...');
         const userData = await apiService.login(email, password);
         
         if (userData && userData.token) {
+          console.log('API login successful:', userData);
           localStorage.setItem('auth_token', userData.token);
           localStorage.setItem('user_data', JSON.stringify(userData));
           
@@ -101,11 +79,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (apiError) {
         console.error('API login error:', apiError);
-        throw apiError;
+        
+        // Fallback to demo mode if API fails
+        if (password === 'password') {
+          console.log('Falling back to demo login');
+          
+          const user: User = {
+            _id: '1',
+            name: email.includes('admin') ? 'Admin User' : 'Doug',
+            email: email,
+            isAdmin: email.includes('admin'),
+            token: 'demo_token_' + Math.random().toString(36).substring(2)
+          };
+          
+          // Store auth data in localStorage
+          localStorage.setItem('auth_token', user.token || '');
+          localStorage.setItem('user_data', JSON.stringify(user));
+          
+          setIsAuthenticated(true);
+          setUser(user);
+          return true;
+        }
       }
-      */
       
-      // For demo purposes, we'll just show an error for non-matching passwords
+      // If we get here, both API and demo login failed
       console.log('Login failed: Invalid credentials');
       setError('Invalid email or password. Use any email with password: "password"');
       return false;
@@ -128,31 +125,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
       
-      // For demo purposes, we'll simulate a successful registration
-      // In a real app, use the API call below
+      console.log('Registration attempt:', { name, email, password });
       
-      const user: User = {
-        _id: '2',
-        name: name,
-        email: email,
-        isAdmin: false,
-        token: 'demo_token_' + Math.random().toString(36).substring(2)
-      };
-      
-      // Store auth data in localStorage
-      localStorage.setItem('auth_token', user.token || '');
-      localStorage.setItem('user_data', JSON.stringify(user));
-      
-      setIsAuthenticated(true);
-      setUser(user);
-      return true;
-      
-      // Real API integration (uncomment for production)
-      /*
+      // Try to use the real API first
       try {
+        console.log('Attempting API registration...');
         const userData = await apiService.register(name, email, password);
         
         if (userData && userData.token) {
+          console.log('API registration successful:', userData);
           localStorage.setItem('auth_token', userData.token);
           localStorage.setItem('user_data', JSON.stringify(userData));
           
@@ -162,13 +143,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (apiError) {
         console.error('API registration error:', apiError);
-        throw apiError;
+        
+        // Fallback to demo mode if API fails
+        console.log('Falling back to demo registration');
+        
+        const user: User = {
+          _id: '2',
+          name: name,
+          email: email,
+          isAdmin: false,
+          token: 'demo_token_' + Math.random().toString(36).substring(2)
+        };
+        
+        // Store auth data in localStorage
+        localStorage.setItem('auth_token', user.token || '');
+        localStorage.setItem('user_data', JSON.stringify(user));
+        
+        setIsAuthenticated(true);
+        setUser(user);
+        return true;
       }
-      */
       
-      // For demo purposes, we'll just show an error
-      console.log('Registration not implemented in demo mode');
-      setError('Registration is not available in demo mode');
+      // This code should not be reached if either API or demo registration succeeds
+      console.log('Registration failed unexpectedly');
+      setError('Registration failed. Please try again.');
       return false;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
