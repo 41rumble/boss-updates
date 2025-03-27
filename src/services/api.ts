@@ -14,8 +14,10 @@ const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
   },
-  withCredentials: true, // Enable sending cookies with cross-origin requests
+  withCredentials: false, // Disable credentials for now to simplify CORS
 });
 
 // Add a request interceptor to include auth token
