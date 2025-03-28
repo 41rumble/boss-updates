@@ -1,6 +1,23 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const LoginHistorySchema = new mongoose.Schema({
+  timestamp: {
+    type: Date,
+    default: Date.now
+  },
+  ipAddress: {
+    type: String,
+    default: ''
+  },
+  userAgent: {
+    type: String,
+    default: ''
+  }
+}, {
+  _id: false
+});
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -21,7 +38,8 @@ const UserSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false
-  }
+  },
+  loginHistory: [LoginHistorySchema]
 }, {
   timestamps: true
 });

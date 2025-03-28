@@ -180,4 +180,9 @@ export const getUserProfile = async () => {
   return response.data;
 };
 
+export const getLoginHistory = async () => {
+  const response = await api.get('/auth/login-history');
+  return response.data;
+};
+
 export default api;

@@ -10,13 +10,21 @@ import {
   CircularProgress,
   Tabs,
   Tab,
-  Divider
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import AddIcon from '@mui/icons-material/Add';
 import StarIcon from '@mui/icons-material/Star';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import PeopleIcon from '@mui/icons-material/People';
 import { 
   addNewsItem, 
   getNewsItems, 
@@ -26,10 +34,11 @@ import {
   toggleAdminKeeper, 
   archiveItem,
   unarchiveItem,
-  markAsRead 
+  markAsRead,
+  getLoginHistory
 } from '../services/api';
 import NewsList from '../components/NewsList';
-import { NewsItem } from '../types';
+import { NewsItem, LoginHistoryEntry } from '../types';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -75,6 +84,12 @@ const AdminPage = () => {
   const [loadingKeepers, setLoadingKeepers] = useState(false);
   const [loadingArchive, setLoadingArchive] = useState(false);
   
+  // Login history state
+  const [loginHistory, setLoginHistory] = useState<LoginHistoryEntry[]>([]);
+  const [loadingLoginHistory, setLoadingLoginHistory] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  
   // Notification state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -89,6 +104,8 @@ const AdminPage = () => {
       fetchKeepers();
     } else if (tabValue === 3) {
       fetchArchivedItems();
+    } else if (tabValue === 4) {
+      fetchLoginHistory();
     }
   }, [tabValue]);
 
@@ -134,6 +151,19 @@ const AdminPage = () => {
       showSnackbar('Failed to load archived items', 'error');
     } finally {
       setLoadingArchive(false);
+    }
+  };
+  
+  const fetchLoginHistory = async () => {
+    try {
+      setLoadingLoginHistory(true);
+      const data = await getLoginHistory();
+      setLoginHistory(data);
+    } catch (err) {
+      console.error('Error fetching login history:', err);
+      showSnackbar('Failed to load login history', 'error');
+    } finally {
+      setLoadingLoginHistory(false);
     }
   };
 
@@ -302,6 +332,16 @@ const AdminPage = () => {
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   };
+  
+  // Pagination handlers for login history
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <Box>
@@ -321,6 +361,7 @@ const AdminPage = () => {
           <Tab icon={<NewspaperIcon />} label="All News" />
           <Tab icon={<StarIcon />} label="Manage Keepers" />
           <Tab icon={<ArchiveIcon />} label="Archive" />
+          <Tab icon={<PeopleIcon />} label="Login History" />
         </Tabs>
         
         {/* Add News Tab */}
@@ -453,6 +494,83 @@ const AdminPage = () => {
               showAdminControls={true}
               emptyMessage="No archived items available."
             />
+          </Box>
+        </TabPanel>
+        
+        {/* Login History Tab */}
+        <TabPanel value={tabValue} index={4}>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              User Login History
+            </Typography>
+            <Typography variant="body2" color="text.secondary" paragraph>
+              Track when users log in to the system. This helps monitor usage patterns and security.
+            </Typography>
+            <Divider sx={{ mb: 3 }} />
+            
+            {loadingLoginHistory ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <>
+                <TableContainer component={Paper} sx={{ mb: 2 }}>
+                  <Table sx={{ minWidth: 650 }} aria-label="login history table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>User</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Role</TableCell>
+                        <TableCell>Login Time</TableCell>
+                        <TableCell>IP Address</TableCell>
+                        <TableCell>Browser/Device</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {loginHistory.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} align="center">
+                            No login history available.
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        loginHistory
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((entry, index) => (
+                            <TableRow key={`${entry.userId}-${index}`} hover>
+                              <TableCell>{entry.userName}</TableCell>
+                              <TableCell>{entry.userEmail}</TableCell>
+                              <TableCell>{entry.isAdmin ? 'Admin' : 'User'}</TableCell>
+                              <TableCell>
+                                {new Date(entry.timestamp).toLocaleString()}
+                              </TableCell>
+                              <TableCell>{entry.ipAddress || 'Unknown'}</TableCell>
+                              <TableCell>
+                                {entry.userAgent ? (
+                                  <Typography variant="body2" noWrap sx={{ maxWidth: 300 }}>
+                                    {entry.userAgent}
+                                  </Typography>
+                                ) : (
+                                  'Unknown'
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, 50]}
+                  component="div"
+                  count={loginHistory.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </>
+            )}
           </Box>
         </TabPanel>
       </Paper>

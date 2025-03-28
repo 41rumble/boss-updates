@@ -15,4 +15,7 @@ router.get('/profile', protect, authController.getUserProfile);
 // Update user profile
 router.put('/profile', protect, authController.updateUserProfile);
 
+// Get login history (admin only)
+router.get('/login-history', protect, authController.getLoginHistory);
+
 module.exports = router;

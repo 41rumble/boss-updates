@@ -20,3 +20,13 @@ export interface User {
   username: string;
   isAdmin: boolean;
 }
+
+export interface LoginHistoryEntry {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  isAdmin: boolean;
+  timestamp: string;
+  ipAddress: string;
+  userAgent: string;
+}

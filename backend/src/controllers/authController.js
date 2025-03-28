@@ -53,6 +53,17 @@ exports.login = async (req, res) => {
     
     // Check if user exists and password matches
     if (user && (await user.comparePassword(password))) {
+      // Record login history
+      const loginInfo = {
+        timestamp: new Date(),
+        ipAddress: req.ip || req.connection.remoteAddress || '',
+        userAgent: req.headers['user-agent'] || ''
+      };
+      
+      // Add to login history
+      user.loginHistory.push(loginInfo);
+      await user.save();
+      
       res.json({
         _id: user._id,
         name: user.name,
@@ -108,6 +119,39 @@ exports.updateUserProfile = async (req, res) => {
     } else {
       res.status(404).json({ message: 'User not found' });
     }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get login history (admin only)
+exports.getLoginHistory = async (req, res) => {
+  try {
+    // Check if the requesting user is an admin
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ message: 'Not authorized to access login history' });
+    }
+    
+    // Get all users with their login history
+    const users = await User.find({}).select('name email loginHistory isAdmin');
+    
+    // Format the data for the frontend
+    const loginHistory = users.flatMap(user => {
+      return user.loginHistory.map(login => ({
+        userId: user._id,
+        userName: user.name,
+        userEmail: user.email,
+        isAdmin: user.isAdmin,
+        timestamp: login.timestamp,
+        ipAddress: login.ipAddress,
+        userAgent: login.userAgent
+      }));
+    });
+    
+    // Sort by timestamp descending (most recent first)
+    loginHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    res.json(loginHistory);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
