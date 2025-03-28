@@ -61,15 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
       
-      console.log('Login attempt:', { email, password });
+      console.log('Login attempt:', { email });
       
-      // Try to use the real API first
       try {
         console.log('Attempting API login...');
         const userData = await apiService.login(email, password);
         
         if (userData && userData.token) {
-          console.log('API login successful:', userData);
+          console.log('API login successful');
           localStorage.setItem('auth_token', userData.token);
           localStorage.setItem('user_data', JSON.stringify(userData));
           
@@ -79,32 +78,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (apiError) {
         console.error('API login error:', apiError);
-        
-        // Fallback to demo mode if API fails
-        if (password === 'password') {
-          console.log('Falling back to demo login');
-          
-          const user: User = {
-            _id: '1',
-            name: email.includes('admin') ? 'Admin User' : 'Doug',
-            email: email,
-            isAdmin: email.includes('admin'),
-            token: 'demo_token_' + Math.random().toString(36).substring(2)
-          };
-          
-          // Store auth data in localStorage
-          localStorage.setItem('auth_token', user.token || '');
-          localStorage.setItem('user_data', JSON.stringify(user));
-          
-          setIsAuthenticated(true);
-          setUser(user);
-          return true;
-        }
       }
       
-      // If we get here, both API and demo login failed
+      // If we get here, login failed
       console.log('Login failed: Invalid credentials');
-      setError('Invalid email or password. Use any email with password: "password"');
+      setError('Invalid email or password.');
       return false;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -119,53 +97,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Register user
+  // Register user (admin only)
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
       setError(null);
       
-      console.log('Registration attempt:', { name, email, password });
+      console.log('Registration attempt:', { name, email });
       
-      // Try to use the real API first
       try {
         console.log('Attempting API registration...');
         const userData = await apiService.register(name, email, password);
         
         if (userData && userData.token) {
-          console.log('API registration successful:', userData);
-          localStorage.setItem('auth_token', userData.token);
-          localStorage.setItem('user_data', JSON.stringify(userData));
-          
-          setIsAuthenticated(true);
-          setUser(userData);
+          console.log('API registration successful');
           return true;
         }
       } catch (apiError) {
         console.error('API registration error:', apiError);
-        
-        // Fallback to demo mode if API fails
-        console.log('Falling back to demo registration');
-        
-        const user: User = {
-          _id: '2',
-          name: name,
-          email: email,
-          isAdmin: false,
-          token: 'demo_token_' + Math.random().toString(36).substring(2)
-        };
-        
-        // Store auth data in localStorage
-        localStorage.setItem('auth_token', user.token || '');
-        localStorage.setItem('user_data', JSON.stringify(user));
-        
-        setIsAuthenticated(true);
-        setUser(user);
-        return true;
       }
       
-      // This code should not be reached if either API or demo registration succeeds
-      console.log('Registration failed unexpectedly');
+      console.log('Registration failed');
       setError('Registration failed. Please try again.');
       return false;
     } catch (error) {

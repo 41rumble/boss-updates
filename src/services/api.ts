@@ -45,29 +45,11 @@ api.interceptors.response.use(
     
     // Handle 401 Unauthorized errors
     if (error.response && error.response.status === 401) {
-      // For demo purposes, we'll use a simulated token
+      console.warn('Authentication error. Please log in again.');
       // In a real app, you might redirect to login or refresh the token
-      console.warn('Authentication error. Using demo token for development.');
-      
-      // Create a demo token if in development mode
-      if (process.env.NODE_ENV === 'development') {
-        const demoToken = 'demo_token_' + Math.random().toString(36).substring(2);
-        localStorage.setItem('auth_token', demoToken);
-        
-        // Create a demo user
-        const demoUser = {
-          _id: '1',
-          name: 'Demo User',
-          email: 'demo@example.com',
-          isAdmin: true
-        };
-        localStorage.setItem('user_data', JSON.stringify(demoUser));
-        
-        // Retry the request with the new token
-        const originalRequest = error.config;
-        originalRequest.headers.Authorization = `Bearer ${demoToken}`;
-        return axios(originalRequest);
-      }
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_data');
+      // Could redirect to login page here if needed
     }
     
     // Handle CORS errors

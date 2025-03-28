@@ -31,19 +31,6 @@ exports.protect = async (req, res, next) => {
       
       console.log('Token extracted:', token);
       
-      // For demo mode - allow demo tokens
-      if (token && token.startsWith('demo_token_')) {
-        console.log('Using demo token');
-        // Set a demo user
-        req.user = {
-          _id: '1',
-          name: 'Demo User',
-          email: 'demo@example.com',
-          isAdmin: true
-        };
-        return next();
-      }
-      
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
       

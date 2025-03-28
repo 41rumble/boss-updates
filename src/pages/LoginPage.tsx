@@ -132,7 +132,7 @@ const LoginPage = () => {
       if (success) {
         navigate('/news');
       } else {
-        setError('Invalid email or password. Try using any email with password: "password"');
+        setError('Invalid email or password.');
       }
     } catch (err) {
       setError('An error occurred during login. Please try again.');
@@ -275,16 +275,11 @@ const LoginPage = () => {
               )}
             </ShimmerButton>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 3 }}>
               <Box>
                 <Link component={RouterLink} to="/" variant="body2">
                   Forgot password?
                 </Link>
-              </Box>
-              <Box>
-                <Typography variant="body2" color="text.secondary">
-                  Demo: any email with password "password"
-                </Typography>
               </Box>
             </Box>
           </Box>
