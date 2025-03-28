@@ -109,31 +109,15 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { login, register, error: authError } = useAuth();
   
-  // Tab state
-  const [tabValue, setTabValue] = useState(0);
-  
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   
-  // Register form state
-  const [registerName, setRegisterName] = useState('');
-  const [registerEmail, setRegisterEmail] = useState('');
-  const [registerPassword, setRegisterPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
   // Shared state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-    setError('');
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,35 +142,7 @@ const LoginPage = () => {
     }
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    // Validate passwords match
-    if (registerPassword !== confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      const success = await register(registerName, registerEmail, registerPassword);
-      if (success) {
-        setSuccess('Registration successful! Redirecting to dashboard...');
-        setTimeout(() => {
-          navigate('/news');
-        }, 1500);
-      } else {
-        setError('Registration failed. Please try again.');
-      }
-    } catch (err) {
-      setError('An error occurred during registration. Please try again.');
-      console.error('Registration error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Registration is now admin-only and handled in the admin section
 
   return (
     <Box
@@ -249,8 +205,7 @@ const LoginPage = () => {
 
         <AnimatedPaper>
           <Tabs 
-            value={tabValue} 
-            onChange={handleTabChange} 
+            value={0} 
             variant="fullWidth"
             sx={{ borderBottom: 1, borderColor: 'divider' }}
           >
@@ -260,190 +215,81 @@ const LoginPage = () => {
               iconPosition="start"
               sx={{ fontWeight: 500 }}
             />
-            <Tab 
-              label="Register" 
-              icon={<RegisterIcon />} 
-              iconPosition="start"
-              sx={{ fontWeight: 500 }}
-            />
+            {/* Register tab removed - registration is now admin-only */}
           </Tabs>
 
           {/* Login Tab */}
-          <TabPanel value={tabValue} index={0}>
-            <Box component="form" onSubmit={handleLogin} noValidate>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type={showLoginPassword ? 'text' : 'password'}
-                id="password"
-                autoComplete="current-password"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowLoginPassword(!showLoginPassword)}
-                        edge="end"
-                      >
-                        {showLoginPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ mb: 3 }}
-              />
+          <Box component="form" onSubmit={handleLogin} noValidate sx={{ pt: 3 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={loginEmail}
+              onChange={(e) => setLoginEmail(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type={showLoginPassword ? 'text' : 'password'}
+              id="password"
+              autoComplete="current-password"
+              value={loginPassword}
+              onChange={(e) => setLoginPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowLoginPassword(!showLoginPassword)}
+                      edge="end"
+                    >
+                      {showLoginPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 3 }}
+            />
 
-              <ShimmerButton
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                disabled={loading || !loginEmail || !loginPassword}
-                sx={{ py: 1.5 }}
-              >
-                {loading ? (
-                  <CircularProgress size={24} color="inherit" />
-                ) : (
-                  'Sign In'
-                )}
-              </ShimmerButton>
+            <ShimmerButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              disabled={loading || !loginEmail || !loginPassword}
+              sx={{ py: 1.5 }}
+            >
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                'Sign In'
+              )}
+            </ShimmerButton>
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-                <Box>
-                  <Link component={RouterLink} to="/" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    Demo: any email with password "password"
-                  </Typography>
-                </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+              <Box>
+                <Link component={RouterLink} to="/" variant="body2">
+                  Forgot password?
+                </Link>
               </Box>
-            </Box>
-          </TabPanel>
-
-          {/* Register Tab */}
-          <TabPanel value={tabValue} index={1}>
-            <Box component="form" onSubmit={handleRegister} noValidate>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="name"
-                label="Full Name"
-                name="name"
-                autoComplete="name"
-                autoFocus
-                value={registerName}
-                onChange={(e) => setRegisterName(e.target.value)}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="register-email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                value={registerEmail}
-                onChange={(e) => setRegisterEmail(e.target.value)}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="register-password"
-                label="Password"
-                type={showRegisterPassword ? 'text' : 'password'}
-                id="register-password"
-                autoComplete="new-password"
-                value={registerPassword}
-                onChange={(e) => setRegisterPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                        edge="end"
-                      >
-                        {showRegisterPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirm-password"
-                label="Confirm Password"
-                type={showConfirmPassword ? 'text' : 'password'}
-                id="confirm-password"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        edge="end"
-                      >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ mb: 3 }}
-              />
-
-              <ShimmerButton
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                disabled={loading || !registerName || !registerEmail || !registerPassword || !confirmPassword}
-                sx={{ py: 1.5 }}
-              >
-                {loading ? (
-                  <CircularProgress size={24} color="inherit" />
-                ) : (
-                  'Register'
-                )}
-              </ShimmerButton>
-
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="body2" color="text.secondary" align="center">
-                  By registering, you agree to our Terms of Service and Privacy Policy.
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  Demo: any email with password "password"
                 </Typography>
               </Box>
             </Box>
-          </TabPanel>
+          </Box>
+
+          {/* Register Tab removed - registration is now admin-only */}
         </AnimatedPaper>
 
         <Box sx={{ mt: 4, textAlign: 'center' }}>
