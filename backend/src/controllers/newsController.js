@@ -3,7 +3,7 @@ const NewsItem = require('../models/NewsItem');
 // Get all news items
 exports.getAllNews = async (req, res) => {
   try {
-    const { archived, isRead, includeAll } = req.query;
+    const { archived, isRead, isInLatest, includeAll } = req.query;
     
     // Build query based on parameters
     const query = {};
@@ -18,6 +18,14 @@ exports.getAllNews = async (req, res) => {
       // Filter by read status if specified
       if (isRead !== undefined) {
         query.isRead = isRead === 'true';
+      }
+      
+      // Filter by isInLatest status if specified
+      if (isInLatest !== undefined) {
+        query.isInLatest = isInLatest === 'true';
+      } else {
+        // By default, only show items that are in Latest view
+        query.isInLatest = true;
       }
     }
     
@@ -226,6 +234,42 @@ exports.markAsRead = async (req, res) => {
     
     newsItem.isRead = true;
     newsItem.lastReadAt = new Date();
+    const updatedItem = await newsItem.save();
+    
+    res.json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Remove a news item from Latest view
+exports.removeFromLatest = async (req, res) => {
+  try {
+    const newsItem = await NewsItem.findById(req.params.id);
+    
+    if (!newsItem) {
+      return res.status(404).json({ message: 'News item not found' });
+    }
+    
+    newsItem.isInLatest = false;
+    const updatedItem = await newsItem.save();
+    
+    res.json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Add a news item back to Latest view
+exports.addToLatest = async (req, res) => {
+  try {
+    const newsItem = await NewsItem.findById(req.params.id);
+    
+    if (!newsItem) {
+      return res.status(404).json({ message: 'News item not found' });
+    }
+    
+    newsItem.isInLatest = true;
     const updatedItem = await newsItem.save();
     
     res.json(updatedItem);

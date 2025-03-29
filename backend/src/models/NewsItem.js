@@ -39,6 +39,10 @@ const NewsItemSchema = new mongoose.Schema({
   lastReadAt: {
     type: Date,
     default: null
+  },
+  isInLatest: {
+    type: Boolean,
+    default: true
   }
 }, {
   timestamps: true

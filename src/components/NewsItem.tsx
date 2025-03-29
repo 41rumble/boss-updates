@@ -21,6 +21,8 @@ import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { NewsItem as NewsItemType } from '../types';
 import { styled } from '@mui/system';
 import VideoThumbnail from './VideoThumbnail';
@@ -87,6 +89,8 @@ interface NewsItemProps {
   onArchive?: (id: string) => void;
   onUnarchive?: (id: string) => void;
   onMarkRead?: (id: string) => void;
+  onRemoveFromLatest?: (id: string) => void;
+  onAddToLatest?: (id: string) => void;
   onItemUpdated?: () => void;
   showAdminControls?: boolean;
 }
@@ -98,6 +102,8 @@ const NewsItem: React.FC<NewsItemProps> = ({
   onArchive,
   onUnarchive,
   onMarkRead,
+  onRemoveFromLatest,
+  onAddToLatest,
   onItemUpdated,
   showAdminControls = false
 }) => {
@@ -170,6 +176,18 @@ const NewsItem: React.FC<NewsItemProps> = ({
     if (onMarkRead) {
       onMarkRead(itemId);
       setIsReadLocally(true);
+    }
+  };
+  
+  const handleRemoveFromLatest = () => {
+    if (onRemoveFromLatest) {
+      onRemoveFromLatest(itemId);
+    }
+  };
+  
+  const handleAddToLatest = () => {
+    if (onAddToLatest) {
+      onAddToLatest(itemId);
     }
   };
   
@@ -338,6 +356,37 @@ const NewsItem: React.FC<NewsItemProps> = ({
                     <VisibilityIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
+              )}
+              
+              {/* Remove from Latest / Add to Latest Button */}
+              {item.isInLatest !== false ? (
+                onRemoveFromLatest && (
+                  <Tooltip title="Remove from Latest view">
+                    <IconButton
+                      onClick={handleRemoveFromLatest}
+                      color="default"
+                      aria-label="Remove from Latest view"
+                      size="small"
+                      sx={{ mr: 1 }}
+                    >
+                      <RemoveCircleOutlineIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )
+              ) : (
+                onAddToLatest && (
+                  <Tooltip title="Add to Latest view">
+                    <IconButton
+                      onClick={handleAddToLatest}
+                      color="default"
+                      aria-label="Add to Latest view"
+                      size="small"
+                      sx={{ mr: 1 }}
+                    >
+                      <AddCircleOutlineIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )
               )}
             </Box>
           )}

@@ -9,6 +9,7 @@ export interface NewsItem {
   isAdminKeeper?: boolean; // Added to track items the admin has marked as keepers
   isRead?: boolean; // Track if Doug has read this item
   isArchived?: boolean; // Track if item has been archived
+  isInLatest?: boolean; // Track if item should appear in Latest view
   lastReadAt?: string; // When the item was last read
   createdAt?: string;
   updatedAt?: string;

@@ -68,6 +68,7 @@ api.interceptors.response.use(
 export const getNewsItems = async (params?: { 
   archived?: boolean, 
   isRead?: boolean,
+  isInLatest?: boolean,
   includeAll?: boolean
 }): Promise<NewsItem[]> => {
   // Create a new object with string values for the API
@@ -80,6 +81,10 @@ export const getNewsItems = async (params?: {
   
   if (params?.isRead !== undefined) {
     queryParams.isRead = params.isRead ? 'true' : 'false';
+  }
+  
+  if (params?.isInLatest !== undefined) {
+    queryParams.isInLatest = params.isInLatest ? 'true' : 'false';
   }
   
   if (params?.includeAll) {
@@ -125,6 +130,16 @@ export const toggleAdminKeeper = async (id: string): Promise<NewsItem> => {
 
 export const markAsRead = async (id: string): Promise<NewsItem> => {
   const response = await api.post(`/news/${id}/mark-read`);
+  return response.data;
+};
+
+export const removeFromLatest = async (id: string): Promise<NewsItem> => {
+  const response = await api.post(`/news/${id}/remove-from-latest`);
+  return response.data;
+};
+
+export const addToLatest = async (id: string): Promise<NewsItem> => {
+  const response = await api.post(`/news/${id}/add-to-latest`);
   return response.data;
 };
 

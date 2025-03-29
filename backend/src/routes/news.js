@@ -36,4 +36,10 @@ router.post('/:id/unarchive', protect, admin, newsController.unarchiveItem);
 // POST mark a news item as read (protected)
 router.post('/:id/mark-read', protect, newsController.markAsRead);
 
+// POST remove a news item from Latest view (admin only)
+router.post('/:id/remove-from-latest', protect, admin, newsController.removeFromLatest);
+
+// POST add a news item back to Latest view (admin only)
+router.post('/:id/add-to-latest', protect, admin, newsController.addToLatest);
+
 module.exports = router;

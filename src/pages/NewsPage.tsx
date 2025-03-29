@@ -20,7 +20,7 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import NewsList from '../components/NewsList';
 import { NewsItem } from '../types';
-import { getNewsItems, toggleFavorite, markAsRead } from '../services/api';
+import { getNewsItems, toggleFavorite, markAsRead, removeFromLatest, addToLatest } from '../services/api';
 
 const NewsPage = () => {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
@@ -44,6 +44,7 @@ const NewsPage = () => {
       let params: {
         archived?: boolean;
         isRead?: boolean;
+        isInLatest?: boolean;
         includeAll?: boolean;
       } = {};
       
@@ -51,8 +52,8 @@ const NewsPage = () => {
         // If searching or "Show All" is selected, don't filter by any status
         params.includeAll = true;
       } else {
-        // For normal Latest view, always filter out read items and archived items
-        params.isRead = false;
+        // For normal Latest view, only show items that are in Latest and not archived
+        params.isInLatest = true;
         params.archived = false;
       }
       
@@ -100,22 +101,41 @@ const NewsPage = () => {
     try {
       const updatedItem = await markAsRead(id);
       
-      // If we're not showing read items, remove the item from the list
-      if (!showRead) {
-        setNewsItems(prevItems => 
-          prevItems.filter(item => item._id !== id)
-        );
-      } else {
-        // Otherwise, update the item in the list
-        setNewsItems(prevItems => 
-          prevItems.map(item => 
-            item._id === id ? { ...item, isRead: true } : item
-          )
-        );
-      }
+      // Update the item in the list to show it as read
+      setNewsItems(prevItems => 
+        prevItems.map(item => 
+          item._id === id ? { ...item, isRead: true } : item
+        )
+      );
     } catch (err) {
       console.error('Error marking item as read:', err);
       setError('Failed to mark item as read. Please try again.');
+    }
+  };
+  
+  const handleRemoveFromLatest = async (id: string) => {
+    try {
+      const updatedItem = await removeFromLatest(id);
+      
+      // Remove the item from the list if we're in the Latest view
+      setNewsItems(prevItems => 
+        prevItems.filter(item => item._id !== id)
+      );
+    } catch (err) {
+      console.error('Error removing item from Latest view:', err);
+      setError('Failed to remove item from Latest view. Please try again.');
+    }
+  };
+  
+  const handleAddToLatest = async (id: string) => {
+    try {
+      const updatedItem = await addToLatest(id);
+      
+      // Refresh the list to show the item if we're in the Latest view
+      fetchNewsItems();
+    } catch (err) {
+      console.error('Error adding item to Latest view:', err);
+      setError('Failed to add item to Latest view. Please try again.');
     }
   };
 
@@ -297,6 +317,8 @@ const NewsPage = () => {
         loading={loading} 
         onToggleFavorite={handleToggleFavorite}
         onMarkRead={handleMarkRead}
+        onRemoveFromLatest={handleRemoveFromLatest}
+        onAddToLatest={handleAddToLatest}
         onItemUpdated={fetchNewsItems}
       />
 
