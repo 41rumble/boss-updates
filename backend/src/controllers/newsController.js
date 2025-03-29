@@ -21,9 +21,14 @@ exports.getAllNews = async (req, res) => {
       }
     }
     
+    console.log('Query:', query); // Log the query for debugging
+    
     const newsItems = await NewsItem.find(query).sort({ date: -1 });
+    console.log(`Found ${newsItems.length} items`); // Log the number of items found
+    
     res.json(newsItems);
   } catch (err) {
+    console.error('Error in getAllNews:', err);
     res.status(500).json({ message: err.message });
   }
 };

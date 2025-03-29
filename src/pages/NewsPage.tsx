@@ -47,21 +47,13 @@ const NewsPage = () => {
         includeAll?: boolean;
       } = {};
       
-      if (showAll) {
-        // If "Show All" is selected, don't filter by any status
+      if (searchTerm.length > 0 || showAll) {
+        // If searching or "Show All" is selected, don't filter by any status
         params.includeAll = true;
       } else {
-        // Otherwise, apply filters
-        if (!showArchived) {
-          params.archived = false;
-        }
-        
-        // Only apply read filter if we're not showing both read and unread
-        if (showRead && !showUnread) {
-          params.isRead = true;
-        } else if (!showRead && showUnread) {
-          params.isRead = false;
-        }
+        // For normal Latest view, always filter out read items and archived items
+        params.isRead = false;
+        params.archived = false;
       }
       
       const data = await getNewsItems(params);
@@ -87,7 +79,7 @@ const NewsPage = () => {
     
     // Fetch items when filters change
     fetchNewsItems();
-  }, [showRead, showUnread, showArchived, showAll]);
+  }, [showRead, showUnread, showArchived, showAll, searchTerm]);
 
   const handleToggleFavorite = async (id: string) => {
     try {
@@ -133,21 +125,35 @@ const NewsPage = () => {
     if (searchTerm.length > 0 && !showAll) {
       // Temporarily set showAll to true to fetch all items
       setShowAll(true);
-    } else if (searchTerm.length === 0 && showAll) {
-      // When search is cleared, reset to default filters
+    } else if (searchTerm.length === 0 && showAll && !showRead && !showArchived) {
+      // When search is cleared and we're not explicitly showing read or archived items,
+      // reset to default filters (unread only)
       setShowAll(false);
       setShowRead(false);
       setShowUnread(true);
       setShowArchived(false);
     }
-  }, [searchTerm]);
+  }, [searchTerm, showAll, showRead, showArchived]);
   
-  // Filter items based on search term
-  const filteredItems = newsItems.filter(item => 
-    searchTerm.length === 0 || 
-    item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    item.summary.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter items based on search term and read status
+  const filteredItems = newsItems.filter(item => {
+    // First, apply search filter if there's a search term
+    const matchesSearch = searchTerm.length === 0 || 
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      item.summary.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (!matchesSearch) return false;
+    
+    // Then, if we're not searching, apply the read/unread filter
+    if (searchTerm.length === 0) {
+      // In Latest view, only show unread items by default
+      if (item.isRead && !showRead) return false;
+      if (!item.isRead && !showUnread) return false;
+      if (item.isArchived && !showArchived) return false;
+    }
+    
+    return true;
+  });
 
   // Handle filter toggles
   const handleToggleShowRead = () => {
