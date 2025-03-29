@@ -23,10 +23,12 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import { NewsItem as NewsItemType } from '../types';
 import { styled } from '@mui/system';
 import VideoThumbnail from './VideoThumbnail';
-import { isVideoUrl } from '../utils/videoUtils';
+import ImagePreview from './ImagePreview';
+import { isVideoUrl, isImageUrl } from '../utils/mediaUtils';
 import { useAuth } from '../context/AuthContext';
 import EditNewsItemModal from './EditNewsItemModal';
 import { markAsRead } from '../services/api';
@@ -211,6 +213,11 @@ const NewsItem: React.FC<NewsItemProps> = ({
       {/* Display video thumbnail if the link is a video URL */}
       {item.link && isVideoUrl(item.link) && (
         <VideoThumbnail url={item.link} title={item.title} id={itemId} />
+      )}
+      
+      {/* Display image preview if the link is an image URL */}
+      {item.link && isImageUrl(item.link) && (
+        <ImagePreview url={item.link} title={item.title} id={itemId} />
       )}
       
       <Divider sx={{ my: 2 }} />
@@ -422,6 +429,37 @@ const NewsItem: React.FC<NewsItemProps> = ({
               Watch Video
             </Typography>
             <PlayArrowIcon fontSize="small" />
+          </Box>
+        ) : isImageUrl(item.link || '') ? (
+          <Box
+            component="button"
+            onClick={() => {
+              // Find the image preview component and trigger its click event
+              const imagePreview = document.getElementById(`image-preview-${itemId}`);
+              if (imagePreview) {
+                imagePreview.click();
+              }
+            }}
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              textDecoration: 'none',
+              color: 'secondary.main',
+              fontFamily: '"Lora", "Georgia", serif',
+              fontWeight: 500,
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline'
+              }
+            }}
+          >
+            <Typography variant="button" sx={{ mr: 0.5 }}>
+              View Image
+            </Typography>
+            <ZoomOutMapIcon fontSize="small" />
           </Box>
         ) : (
           <Link 

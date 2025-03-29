@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { Box, Paper, IconButton, Modal, Typography } from '@mui/material';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { Box, Paper, Modal, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { getVideoThumbnailUrl, getVideoEmbedUrl } from '../utils/mediaUtils';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import { styled } from '@mui/system';
 
-interface VideoThumbnailProps {
+interface ImagePreviewProps {
   url: string;
   title?: string;
   id?: string;
 }
 
-const ThumbnailContainer = styled(Paper)(({ theme }) => ({
+const ImageContainer = styled(Paper)(({ theme }) => ({
   position: 'relative',
   width: '100%',
   marginTop: theme.spacing(2),
@@ -20,7 +19,7 @@ const ThumbnailContainer = styled(Paper)(({ theme }) => ({
   borderRadius: theme.spacing(1),
   cursor: 'pointer',
   transition: 'transform 0.3s ease',
-  // Add max-width for desktop screens to prevent thumbnails from dominating the space
+  // Add max-width for desktop screens to prevent images from dominating the space
   [theme.breakpoints.up('md')]: {
     maxWidth: '400px',
     margin: '16px auto',
@@ -33,33 +32,31 @@ const ThumbnailContainer = styled(Paper)(({ theme }) => ({
   },
 }));
 
-const PlayButton = styled(IconButton)(({ theme }) => ({
+const ExpandButton = styled(IconButton)(({ theme }) => ({
   position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  bottom: theme.spacing(1),
+  right: theme.spacing(1),
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
   color: '#fff',
   '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    transform: 'translate(-50%, -50%) scale(1.1)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
 }));
 
-const VideoOverlay = styled(Box)(({ theme }) => ({
+const ImageOverlay = styled(Box)(({ theme }) => ({
   position: 'absolute',
   top: 0,
   left: 0,
   width: '100%',
   height: '100%',
-  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  backgroundColor: 'rgba(0, 0, 0, 0)',
   transition: 'background-color 0.3s ease',
   '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
 }));
 
-const VideoTitle = styled(Typography)(({ theme }) => ({
+const ImageTitle = styled(Typography)(({ theme }) => ({
   position: 'absolute',
   bottom: 0,
   left: 0,
@@ -73,17 +70,10 @@ const VideoTitle = styled(Typography)(({ theme }) => ({
   overflow: 'hidden',
 }));
 
-const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title, id }) => {
+const ImagePreview: React.FC<ImagePreviewProps> = ({ url, title, id }) => {
   const [open, setOpen] = useState(false);
   
-  const thumbnailUrl = getVideoThumbnailUrl(url);
-  // Add autoplay parameter to the embed URL when the modal is opened
-  const baseEmbedUrl = getVideoEmbedUrl(url);
-  const embedUrl = open && baseEmbedUrl ? 
-    baseEmbedUrl + (baseEmbedUrl.includes('?') ? '&' : '?') + 'autoplay=1' : 
-    baseEmbedUrl;
-  
-  if (!thumbnailUrl || !embedUrl) {
+  if (!url) {
     return null;
   }
   
@@ -97,14 +87,15 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title, id }) => {
   
   return (
     <>
-      <ThumbnailContainer 
+      <ImageContainer 
         elevation={3} 
         onClick={handleOpen} 
-        id={id ? `video-thumbnail-${id}` : undefined}>
+        id={id ? `image-preview-${id}` : undefined}
+      >
         <Box
           component="img"
-          src={thumbnailUrl}
-          alt={title || "Video thumbnail"}
+          src={url}
+          alt={title || "Image"}
           sx={{
             width: '100%',
             height: 'auto',
@@ -113,18 +104,18 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title, id }) => {
             aspectRatio: '16/9',
           }}
         />
-        <VideoOverlay />
-        <PlayButton aria-label="play video">
-          <PlayArrowIcon sx={{ fontSize: { xs: 60, md: 50 } }} />
-        </PlayButton>
-        {title && <VideoTitle variant="body2">{title}</VideoTitle>}
-      </ThumbnailContainer>
+        <ImageOverlay />
+        <ExpandButton aria-label="expand image">
+          <ZoomOutMapIcon />
+        </ExpandButton>
+        {title && <ImageTitle variant="body2">{title}</ImageTitle>}
+      </ImageContainer>
       
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="video-modal"
-        aria-describedby="video-player"
+        aria-labelledby="image-modal"
+        aria-describedby="image-preview"
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -160,19 +151,17 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title, id }) => {
             <CloseIcon />
           </IconButton>
           
-          <Box sx={{ position: 'relative', paddingTop: '56.25%' /* 16:9 aspect ratio */ }}>
-            <iframe
-              src={embedUrl}
-              title={title || "Video player"}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
+          <Box sx={{ width: '100%' }}>
+            <Box
+              component="img"
+              src={url}
+              alt={title || "Image"}
+              sx={{
                 width: '100%',
-                height: '100%',
+                height: 'auto',
+                display: 'block',
+                maxHeight: '80vh',
+                objectFit: 'contain',
               }}
             />
           </Box>
@@ -188,4 +177,4 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title, id }) => {
   );
 };
 
-export default VideoThumbnail;
+export default ImagePreview;
