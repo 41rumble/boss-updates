@@ -127,7 +127,24 @@ const NewsPage = () => {
     }
   };
 
+  // When searching, we want to search across all items
+  useEffect(() => {
+    // If we start searching, fetch all items
+    if (searchTerm.length > 0 && !showAll) {
+      // Temporarily set showAll to true to fetch all items
+      setShowAll(true);
+    } else if (searchTerm.length === 0 && showAll) {
+      // When search is cleared, reset to default filters
+      setShowAll(false);
+      setShowRead(false);
+      setShowUnread(true);
+      setShowArchived(false);
+    }
+  }, [searchTerm]);
+  
+  // Filter items based on search term
   const filteredItems = newsItems.filter(item => 
+    searchTerm.length === 0 || 
     item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
     item.summary.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -167,7 +184,7 @@ const NewsPage = () => {
         Latest Updates
       </Typography>
       
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, mb: 3 }}>
+      <Box sx={{ mb: 3 }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -183,83 +200,90 @@ const NewsPage = () => {
           }}
         />
         
-        <Paper sx={{ p: 2, minWidth: { md: '300px' } }}>
-          <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-            Filters
-            {activeFiltersCount > 0 && (
-              <Chip 
-                label={activeFiltersCount} 
-                size="small" 
-                color="primary" 
-                sx={{ ml: 1 }} 
-              />
-            )}
-          </Typography>
-          
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox 
-                  checked={showUnread} 
-                  onChange={handleToggleShowUnread}
-                  disabled={showAll}
+        {/* Only show filters when searching */}
+        {searchTerm.length > 0 && (
+          <Paper sx={{ p: 2, mt: 2 }}>
+            <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+              Search Filters
+              {activeFiltersCount > 0 && (
+                <Chip 
+                  label={activeFiltersCount} 
+                  size="small" 
+                  color="primary" 
+                  sx={{ ml: 1 }} 
                 />
-              }
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <VisibilityOffIcon fontSize="small" sx={{ mr: 0.5 }} />
-                  <Typography variant="body2">Unread</Typography>
-                </Box>
-              }
-            />
+              )}
+            </Typography>
             
-            <FormControlLabel
-              control={
-                <Checkbox 
-                  checked={showRead} 
-                  onChange={handleToggleShowRead}
-                  disabled={showAll}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+              <FormGroup row>
+                <FormControlLabel
+                  control={
+                    <Checkbox 
+                      checked={showUnread} 
+                      onChange={handleToggleShowUnread}
+                      disabled={showAll}
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <VisibilityOffIcon fontSize="small" sx={{ mr: 0.5 }} />
+                      <Typography variant="body2">Unread</Typography>
+                    </Box>
+                  }
                 />
-              }
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <VisibilityIcon fontSize="small" sx={{ mr: 0.5 }} />
-                  <Typography variant="body2">Read</Typography>
-                </Box>
-              }
-            />
-            
-            <FormControlLabel
-              control={
-                <Checkbox 
-                  checked={showArchived} 
-                  onChange={handleToggleShowArchived}
-                  disabled={showAll}
+                
+                <FormControlLabel
+                  control={
+                    <Checkbox 
+                      checked={showRead} 
+                      onChange={handleToggleShowRead}
+                      disabled={showAll}
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <VisibilityIcon fontSize="small" sx={{ mr: 0.5 }} />
+                      <Typography variant="body2">Read</Typography>
+                    </Box>
+                  }
                 />
-              }
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <ArchiveIcon fontSize="small" sx={{ mr: 0.5 }} />
-                  <Typography variant="body2">Archived</Typography>
-                </Box>
-              }
-            />
-            
-            <Divider sx={{ my: 1 }} />
-            
-            <FormControlLabel
-              control={
-                <Checkbox 
-                  checked={showAll} 
-                  onChange={handleToggleShowAll}
+                
+                <FormControlLabel
+                  control={
+                    <Checkbox 
+                      checked={showArchived} 
+                      onChange={handleToggleShowArchived}
+                      disabled={showAll}
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <ArchiveIcon fontSize="small" sx={{ mr: 0.5 }} />
+                      <Typography variant="body2">Archived</Typography>
+                    </Box>
+                  }
                 />
-              }
-              label={
-                <Typography variant="body2" fontWeight="bold">Show All</Typography>
-              }
-            />
-          </FormGroup>
-        </Paper>
+                
+                <FormControlLabel
+                  control={
+                    <Checkbox 
+                      checked={showAll} 
+                      onChange={handleToggleShowAll}
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Typography variant="body2" fontWeight="bold">Show All</Typography>
+                  }
+                />
+              </FormGroup>
+            </Box>
+          </Paper>
+        )}
       </Box>
       
       <NewsList 
