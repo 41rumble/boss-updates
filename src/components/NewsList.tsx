@@ -11,6 +11,8 @@ interface NewsListProps {
   onArchive?: (id: string) => void;
   onUnarchive?: (id: string) => void;
   onMarkRead?: (id: string) => void;
+  onRemoveFromLatest?: (id: string) => void;
+  onAddToLatest?: (id: string) => void;
   onItemUpdated?: () => void;
   emptyMessage?: string;
   showAdminControls?: boolean;
@@ -24,6 +26,8 @@ const NewsList: React.FC<NewsListProps> = ({
   onArchive,
   onUnarchive,
   onMarkRead,
+  onRemoveFromLatest,
+  onAddToLatest,
   onItemUpdated,
   emptyMessage = "No news items available.",
   showAdminControls = false
@@ -57,6 +61,8 @@ const NewsList: React.FC<NewsListProps> = ({
           onArchive={onArchive}
           onUnarchive={onUnarchive}
           onMarkRead={onMarkRead}
+          onRemoveFromLatest={onRemoveFromLatest}
+          onAddToLatest={onAddToLatest}
           onItemUpdated={onItemUpdated}
           showAdminControls={showAdminControls}
         />
