@@ -3,14 +3,22 @@ const NewsItem = require('../models/NewsItem');
 // Get all news items
 exports.getAllNews = async (req, res) => {
   try {
-    const { archived } = req.query;
+    const { archived, isRead, includeAll } = req.query;
     
     // Build query based on parameters
     const query = {};
     
-    // Filter by archive status if specified
-    if (archived !== undefined) {
-      query.isArchived = archived === 'true';
+    // If includeAll is true, don't filter by any status
+    if (includeAll !== 'true') {
+      // Filter by archive status if specified
+      if (archived !== undefined) {
+        query.isArchived = archived === 'true';
+      }
+      
+      // Filter by read status if specified
+      if (isRead !== undefined) {
+        query.isRead = isRead === 'true';
+      }
     }
     
     const newsItems = await NewsItem.find(query).sort({ date: -1 });

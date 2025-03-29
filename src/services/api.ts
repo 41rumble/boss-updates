@@ -65,13 +65,25 @@ api.interceptors.response.use(
   }
 );
 
-export const getNewsItems = async (params?: { archived?: boolean }): Promise<NewsItem[]> => {
+export const getNewsItems = async (params?: { 
+  archived?: boolean, 
+  isRead?: boolean,
+  includeAll?: boolean
+}): Promise<NewsItem[]> => {
   // Create a new object with string values for the API
   const queryParams: Record<string, string> = {};
   
   // Only add parameters that are defined
   if (params?.archived !== undefined) {
     queryParams.archived = params.archived ? 'true' : 'false';
+  }
+  
+  if (params?.isRead !== undefined) {
+    queryParams.isRead = params.isRead ? 'true' : 'false';
+  }
+  
+  if (params?.includeAll) {
+    queryParams.includeAll = 'true';
   }
   
   const response = await api.get('/news', { params: queryParams });
