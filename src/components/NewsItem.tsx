@@ -20,6 +20,7 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { NewsItem as NewsItemType } from '../types';
 import { styled } from '@mui/system';
 import VideoThumbnail from './VideoThumbnail';
@@ -191,7 +192,7 @@ const NewsItem: React.FC<NewsItemProps> = ({
       
       {/* Display video thumbnail if the link is a video URL */}
       {item.link && isVideoUrl(item.link) && (
-        <VideoThumbnail url={item.link} title={item.title} />
+        <VideoThumbnail url={item.link} title={item.title} id={itemId} />
       )}
       
       <Divider sx={{ my: 2 }} />
@@ -342,27 +343,60 @@ const NewsItem: React.FC<NewsItemProps> = ({
           )}
         </Box>
         
-        <Link 
-          href={item.link} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            textDecoration: 'none',
-            color: 'secondary.main',
-            fontFamily: '"Lora", "Georgia", serif',
-            fontWeight: 500,
-            '&:hover': {
-              textDecoration: 'underline'
-            }
-          }}
-        >
-          <Typography variant="button" sx={{ mr: 0.5 }}>
-            {isVideoUrl(item.link || '') ? 'Watch Video' : 'Read Full Article'}
-          </Typography>
-          <OpenInNewIcon fontSize="small" />
-        </Link>
+        {isVideoUrl(item.link || '') ? (
+          <Box
+            component="button"
+            onClick={() => {
+              // Find the video thumbnail component and trigger its click event
+              const videoThumbnail = document.getElementById(`video-thumbnail-${itemId}`);
+              if (videoThumbnail) {
+                videoThumbnail.click();
+              }
+            }}
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              textDecoration: 'none',
+              color: 'secondary.main',
+              fontFamily: '"Lora", "Georgia", serif',
+              fontWeight: 500,
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline'
+              }
+            }}
+          >
+            <Typography variant="button" sx={{ mr: 0.5 }}>
+              Watch Video
+            </Typography>
+            <PlayArrowIcon fontSize="small" />
+          </Box>
+        ) : (
+          <Link 
+            href={item.link} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              textDecoration: 'none',
+              color: 'secondary.main',
+              fontFamily: '"Lora", "Georgia", serif',
+              fontWeight: 500,
+              '&:hover': {
+                textDecoration: 'underline'
+              }
+            }}
+          >
+            <Typography variant="button" sx={{ mr: 0.5 }}>
+              Read Full Article
+            </Typography>
+            <OpenInNewIcon fontSize="small" />
+          </Link>
+        )}
       </Box>
       
       {/* Edit Modal */}

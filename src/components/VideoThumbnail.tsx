@@ -8,6 +8,7 @@ import { styled } from '@mui/system';
 interface VideoThumbnailProps {
   url: string;
   title?: string;
+  id?: string;
 }
 
 const ThumbnailContainer = styled(Paper)(({ theme }) => ({
@@ -72,11 +73,15 @@ const VideoTitle = styled(Typography)(({ theme }) => ({
   overflow: 'hidden',
 }));
 
-const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title }) => {
+const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title, id }) => {
   const [open, setOpen] = useState(false);
   
   const thumbnailUrl = getVideoThumbnailUrl(url);
-  const embedUrl = getVideoEmbedUrl(url);
+  // Add autoplay parameter to the embed URL when the modal is opened
+  const baseEmbedUrl = getVideoEmbedUrl(url);
+  const embedUrl = open && baseEmbedUrl ? 
+    baseEmbedUrl + (baseEmbedUrl.includes('?') ? '&' : '?') + 'autoplay=1' : 
+    baseEmbedUrl;
   
   if (!thumbnailUrl || !embedUrl) {
     return null;
@@ -92,7 +97,10 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ url, title }) => {
   
   return (
     <>
-      <ThumbnailContainer elevation={3} onClick={handleOpen}>
+      <ThumbnailContainer 
+        elevation={3} 
+        onClick={handleOpen} 
+        id={id ? `video-thumbnail-${id}` : undefined}>
         <Box
           component="img"
           src={thumbnailUrl}
